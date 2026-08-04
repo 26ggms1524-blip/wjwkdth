@@ -38,27 +38,31 @@
             text-shadow: 2px 2px 0px #2d3436;
         }
 
-        /* 꾹 누르는 입체 모션이 추가된 메뉴 나가기 버튼 */
+        /* 🎨 [색상 및 폰트 변경] 소다색 베이스와 고전 아케이드 픽셀 룩 스타일링 */
         .exit-btn {
-            background-color: #ee5253;
+            background-color: #74b9ff; /* 청량한 레트로 소다 블루 */
             color: white;
-            border: 3px solid #000;
-            box-shadow: 0px 4px 0px #b33939, 3px 6px 0px #000;
-            padding: 6px 14px;
-            font-size: 1.1rem;
+            border: 3px solid #2d3436;
+            box-shadow: 0px 4px 0px #0984e3, 4px 8px 0px #2d3436; /* 묵직한 아케이드 입체 입자 */
+            padding: 8px 16px;
+            font-size: 1.2rem; /* 옛날 게임 인터페이스 가독성 확장 */
+            letter-spacing: 1px; /* 자간 조정을 통한 도트 자막 연출 */
+            text-shadow: 2px 2px 0px #0984e3; /* 글자 내벽 음영 추가 */
             cursor: pointer;
             font-family: 'DungGeunMo', monospace;
             position: relative;
+            transition: none; /* 도트 특유의 칼같은 반응을 위해 트랜지션 제한 */
         }
         .exit-btn:hover {
-            background-color: #ff7979;
-            color: #fff;
-            box-shadow: 0px 3px 0px #b33939, 3px 5px 0px #000;
-            transform: translateY(1px);
+            background-color: #0984e3;
+            color: #ffeaa7; /* 올드 팩 게임기 특유의 옐로우 폰트 스위칭 */
+            box-shadow: 0px 2px 0px #054b82, 4px 6px 0px #2d3436;
+            transform: translateY(2px) translateX(0px);
+            text-shadow: 2px 2px 0px #054b82;
         }
         .exit-btn:active {
-            box-shadow: 0px 0px 0px #000, 1px 1px 0px #000;
-            transform: translateY(4px) translateX(1px);
+            box-shadow: 0px 0px 0px #000, 2px 2px 0px #2d3436;
+            transform: translateY(6px) translateX(2px); /* 완벽하게 오락기 기판 하단으로 침강하는 터치 모션 */
         }
 
         /* 8비트 게임기 스타일 메인 스크린 컨테이너 (메인 메뉴와 완벽하게 일치하는 규격) */
@@ -190,10 +194,9 @@
 </head>
 <body>
 
-    <!-- 상단 점수판 정보 구역 -->
+    <!-- 상단 점수판 및 소다색 픽셀 버튼 영역 -->
     <div class="hud-container">
         <div class="hud">SCORE: <span id="scoreVal">000</span></div>
-        <!-- 💡 클릭 시 이전 디렉토리에 생성해둔 메인 메뉴 파일로 연동 점프 -->
         <button class="exit-btn" onclick="window.location.href='main.html'">메뉴로 나가기</button>
     </div>
 
@@ -201,22 +204,22 @@
         <!-- 주인공 캐릭터 플레이어 -->
         <div id="player" class="game-obj"></div>
 
-        <!-- 플레이 설명 알림창 모달 -->
+        <!-- 한국어로 변경 및 버튼 버그 수정한 알림창 모달 -->
         <div class="modal-overlay" id="guideModal">
             <div class="modal-box">
-                <div class="modal-title">HOW TO PLAY</div>
+                <div class="modal-title">게임 방법</div>
                 <div class="modal-desc">
-                    • ◀ / ▶ : Move Left & Right<br>
-                    • ▲ / SPACE : Jump Up<br><br>
-                    Jump on the pixel clouds and collect all the retro soda cans to get a high score!
+                    • ◀ / ▶ : 좌우 이동 (A / D)<br>
+                    • ▲ / SPACE : 점프하기 (W)<br><br>
+                    둥실둥실 떠다니는 도트 구름 발판을 밟고 올라가 화면 속 소다 캔을 모두 수집하여 높은 점수를 획득해 보세요!
                 </div>
-                <button class="start-btn" onclick="startGame()">START GAME</button>
+                <button class="start-btn" onclick="startGame()">게임 시작</button>
             </div>
         </div>
     </div>
 
     <!-- 하단 고정 키 조작 가이드 -->
-    <div class="controls-guide">[◀] [▶] MOVE &nbsp;&nbsp;|&nbsp;&nbsp; [SPACE] or [▲] JUMP</div>
+    <div class="controls-guide">[◀] [▶] 이동 &nbsp;&nbsp;|&nbsp;&nbsp; [SPACE] 또는 [▲] 점프</div>
 
     <script>
         const screen = document.getElementById('gameScreen');
@@ -224,25 +227,21 @@
         const scoreEl = document.getElementById('scoreVal');
         const guideModal = document.getElementById('guideModal');
 
-        // 게임 물리용 규격 상수 데이터 셋
         const screenWidth = 600; const screenHeight = 400;
         let player = { x: 280, y: 300, vx: 0, vy: 0, width: 24, height: 32, isGrounded: false };
         let score = 0; const gravity = 0.4; const jumpForce = -9.5; const moveSpeed = 4.5;
         const keys = {}; let gameActive = false;
 
-        // 발판 타일맵 구성 배열
         const platforms = [
             { x: 0, y: 380, width: 600 }, { x: 80, y: 300, width: 120 }, { x: 380, y: 280, width: 140 },
             { x: 220, y: 210, width: 140 }, { x: 40, y: 140, width: 110 }, { x: 440, y: 130, width: 100 }, { x: 250, y: 90, width: 100 }
         ];
         
-        // 배치된 수집 아이템 배열 데이터
         let items = [
             { x: 130, y: 260, active: true }, { x: 450, y: 240, active: true }, { x: 280, y: 170, active: true },
             { x: 90, y: 100, active: true }, { x: 480, y: 90, active: true }, { x: 290, y: 50, active: true }
         ];
 
-        // 맵 초기화 렌더링 드로잉 루틴
         function initMap() {
             platforms.forEach((plat, index) => {
                 if(index > 0) {
@@ -260,29 +259,20 @@
             });
         }
 
-        // 키보드 핸들러 인터셉트 시스템
         window.addEventListener('keydown', e => { if(gameActive) keys[e.code] = true; });
         window.addEventListener('keyup', e => { if(gameActive) keys[e.code] = false; });
 
-        // 알림창 START GAME 클릭 시 스위치 제어
         function startGame() {
-            guideModal.style.display = 'none';
-            gameActive = true;
+            guideModal.style.display = 'none'; 
+            gameActive = true;                
         }
 
-        // 60fps 프레임 핵심 물리 루프 연산
         function update() {
             if (gameActive) {
-                // 가로 물리 이동 속도 제어
                 if (keys['ArrowLeft'] || keys['KeyA']) {
                     player.vx = -moveSpeed; playerEl.style.transform = 'scaleX(-1)';
                 } else if (keys['ArrowRight'] || keys['KeyD']) {
                     player.vx = moveSpeed; playerEl.style.transform = 'scaleX(1)';
                 } else { player.vx = 0; }
 
-                // 수직 도약 점프 메커니즘
                 if ((keys['Space'] || keys['ArrowUp'] || keys['KeyW']) && player.isGrounded) {
-                    player.vy = jumpForce; player.isGrounded = false;
-                }
-
-
