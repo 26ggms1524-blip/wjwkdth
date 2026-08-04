@@ -52,7 +52,7 @@
         /* 🕹️ 아케이드 기기 캐비닛 프레임 본체 하우징 */
         .arcade-cabinet {
             background: #2d3436; 
-            border: 6px solid #ff6b81; /* 본체 마감 핑크 라인 테두리 */
+            border: 6px solid #ff6b81; 
             padding: 20px;
             border-radius: 12px;
             box-shadow: 0px 15px 0px #1e2124, 0px 0px 30px rgba(255, 107, 129, 0.5);
@@ -185,7 +185,7 @@
         .joystick-knob {
             position: absolute;
             width: 18px; height: 18px;
-            background: #ff6b81; /* 조이스틱 노브도 본체 테두리와 깔끔한 매칭 링크 */
+            background: #ff6b81; 
             border: 3px solid #000;
             border-radius: 50%;
             top: -14px; left: -8px;
@@ -208,21 +208,14 @@
             transform: translateY(3px);
         }
 
-        /* ✨ 색상 수정: 칙칙한 원색에서 파스텔 솜사탕 톤으로 드레스업 */
         .arc-pink { 
-            background: #ff7979; /* 딸기 밀크 핑크 버튼 */
+            background: #ff7979; 
             box-shadow: 0px 4px 0px #b33939; 
         }
         .arc-pink:active { box-shadow: 0px 1px 0px #b33939; }
 
-        .arc-blue { 
-            background: #74b9ff; /* 네온 소다 블루 버튼 */
-            box-shadow: 0px 4px 0px #0984e3; 
-        }
-        .arc-blue:active { box-shadow: 0px 1px 0px #0984e3; }
-
         .arc-yellow { 
-            background: #ffeaa7; /* 바나나 요거트 옐로우 버튼 */
+            background: #ffeaa7; 
             box-shadow: 0px 4px 0px #fdcb6e; 
         }
         .arc-yellow:active { box-shadow: 0px 1px 0px #fdcb6e; }
@@ -269,7 +262,7 @@
 </head>
 <body>
 
-    <!-- 🕹️ 레트로 게임기 하우징 프레임 -->
+    <!-- 🕹️ 레트로 게임기 외곽 하우징 프레임 -->
     <div class="arcade-cabinet">
         
         <!-- 📺 오락기 모니터 화면 구역 -->
@@ -301,3 +294,9 @@
             
             <!-- 🔗 실제 링크 제어 스위치 기능을 장착한 컬러 물리 버튼 랙 -->
             <div class="action-buttons">
+                <!-- 핑크 버튼: 1번 게임 페이지 점프 연동 -->
+                <div class="arcade-button arc-pink" title="Go to Game" onclick="window.location.href='game.html'"></div>
+                <!-- 노란 버튼: 슬라임 펫을 깜짝 놀라게 하는 기믹 스위치 -->
+                <div class="arcade-button arc-yellow" title="Booster Pet" onclick="scareSlime()"></div>
+            </div>
+
