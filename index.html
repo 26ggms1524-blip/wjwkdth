@@ -29,15 +29,24 @@
             left: 0;
             width: 200%;
             height: 100%;
+            
+            /* Crisply aligned horizontal/vertical pixel graphic combinations */
             background-image: 
+                /* First large cloud layer */
                 linear-gradient(90deg, rgba(255,255,255,0.6) 80px, transparent 0),
                 linear-gradient(rgba(255,255,255,0.6) 30px, transparent 0),
+                /* Second small cloud layer */
                 linear-gradient(90deg, rgba(255,255,255,0.4) 50px, transparent 0),
                 linear-gradient(rgba(255,255,255,0.4) 20px, transparent 0),
+                /* Added 8-bit pixel grid texture layer */
                 linear-gradient(rgba(255, 255, 255, 0.15) 4px, transparent 0),
                 linear-gradient(90deg, rgba(255, 255, 255, 0.15) 4px, transparent 0);
+                
+            /* Standardized background size for perfect pixel grid snapping */
             background-size: 240px 160px, 240px 160px, 160px 100px, 160px 100px, 8px 8px, 8px 8px;
             background-position: 40px 20%, 40px 20%, 120px 55%, 120px 55%, 0 0, 0 0;
+            
+            /* Smooth horizontal floating animation */
             animation: floatClouds 25s linear infinite;
             z-index: 1;
         }
@@ -96,9 +105,10 @@
             box-shadow: 0px 0px 0px #2d3436;
         }
 
-        /* --- 웅장하게 밀려나가는 애니메이션 세팅 --- */
+        /* --- 박스가 밀려나가는 애니메이션 속도 제어 --- */
         .slide-out {
-            animation: slideLeftMove 0.6s cubic-bezier(0.55, 0.055, 0.675, 0.19) forwards;
+            /* ⏱️ 슬라임 속도에 맞춰 박스 밀리는 속도도 1.4초로 천천히 연장했습니다 */
+            animation: slideLeftMove 1.4s cubic-bezier(0.45, 0.05, 0.55, 0.95) forwards;
         }
         @keyframes slideLeftMove {
             0% { transform: translateX(0); opacity: 1; }
@@ -109,7 +119,7 @@
         .push-slime {
             position: fixed;
             bottom: 20%;
-            right: -60px; /* 처음에는 화면 오른쪽에 숨어있음 */
+            right: -60px; 
             width: 48px;
             height: 40px;
             background-color: #a8e6cf;
@@ -124,7 +134,7 @@
             content: "";
             position: absolute;
             top: 10px;
-            left: 8px; /* 왼쪽을 보며 밀기 때문에 왼쪽에 배치 */
+            left: 8px; 
             width: 6px;
             height: 6px;
             background-color: #000;
@@ -135,14 +145,14 @@
         .slime-charge {
             display: block !important;
             animation: 
-                slimeWalkLoop 0.12s infinite alternate, 
-                slimePushLeft 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+                slimeWalkLoop 0.18s infinite alternate, /* 발걸음 속도도 조금 더 여유롭게 조정 */
+                slimePushLeft 1.6s linear forwards;    /* ⏱️ 이동 총 시간을 0.8초에서 1.6초로 대폭 늘려 천천히 가도록 바꿨습니다 */
         }
 
         /* 쿵쾅쿵쾅 뛰는 도트 애니메이션 */
         @keyframes slimeWalkLoop {
             0% { transform: scaleY(1); }
-            100% { transform: scaleY(0.82) translateY(3px); }
+            100% { transform: scaleY(0.85) translateY(2px); }
         }
         /* 오른쪽에서 왼쪽으로 화면 전체를 돌파하는 애니메이션 */
         @keyframes slimePushLeft {
@@ -169,18 +179,18 @@
             const container = document.getElementById('mainContainer');
             const slime = document.getElementById('pushSlime');
 
-            // 1. 슬라임 소환 후 왼쪽으로 전속력 돌진 가동
+            // 1. 슬라임 소환 후 왼쪽으로 천천히 전진 가동
             slime.classList.add('slime-charge');
 
-            // 2. 타이밍 맞춰서 슬라임이 박스에 부딪힐 때 박스도 함께 밀려나도록 연출 (0.2초 뒤)
+            // 2. ⏱️ 슬라임이 이동하는 속도가 느려졌으므로, 박스에 도달하는 타이밍인 0.4초(400ms) 뒤에 컨테이너가 밀리도록 수정했습니다.
             setTimeout(() => {
                 container.classList.add('slide-out');
-            }, 200);
+            }, 400);
 
-            // 3. 슬라임이 화면 왼쪽 끝으로 완전히 다 밀고 나갔을 때 페이지 연동 전환 (0.8초 뒤)
+            // 3. ⏱️ 슬라임이 화면 끝까지 다 밀고 나가는 총 1.6초(1600ms) 시점에 다음 화면 파일로 이동하게 설정했습니다.
             setTimeout(() => {
                 window.location.href = 'main.html';
-            }, 800);
+            }, 1600);
         });
     </script>
 </body>
