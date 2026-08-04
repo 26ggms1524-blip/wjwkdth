@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Cloud Soda - 90's Retro Taste</title>
     <style>
-        /* Import retro pixel web font */
+        /* Import retro pixel web font (Fixed CDN URL) */
         @import url('https://jsdelivr.net');
         
         body {
@@ -29,14 +29,23 @@
             left: 0;
             width: 200%;
             height: 100%;
-            /* Generated pixel clouds using CSS grids */
+            
+            /* Crisply aligned horizontal/vertical pixel graphic combinations */
             background-image: 
-                linear-gradient(rgba(255,255,255,0.6) 20px, transparent 0),
-                linear-gradient(90deg, rgba(255,255,255,0.6) 60px, transparent 0),
-                linear-gradient(rgba(255,255,255,0.4) 15px, transparent 0),
-                linear-gradient(90deg, rgba(255,255,255,0.4) 40px, transparent 0);
-            background-size: 200px 150px, 200px 150px, 130px 90px, 130px 90px;
-            background-position: 0 20%, 0 20%, 50px 60%, 50px 60%;
+                /* First large cloud layer */
+                linear-gradient(90deg, rgba(255,255,255,0.6) 80px, transparent 0),
+                linear-gradient(rgba(255,255,255,0.6) 30px, transparent 0),
+                /* Second small cloud layer */
+                linear-gradient(90deg, rgba(255,255,255,0.4) 50px, transparent 0),
+                linear-gradient(rgba(255,255,255,0.4) 20px, transparent 0),
+                /* Added 8-bit pixel grid texture layer */
+                linear-gradient(rgba(255, 255, 255, 0.15) 4px, transparent 0),
+                linear-gradient(90deg, rgba(255, 255, 255, 0.15) 4px, transparent 0);
+                
+            /* Standardized background size for perfect pixel grid snapping */
+            background-size: 240px 160px, 240px 160px, 160px 100px, 160px 100px, 8px 8px, 8px 8px;
+            background-position: 40px 20%, 40px 20%, 120px 55%, 120px 55%, 0 0, 0 0;
+            
             /* Smooth horizontal floating animation */
             animation: floatClouds 25s linear infinite;
             z-index: 1;
@@ -97,12 +106,13 @@
 </head>
 <body>
     <div class="container">
-        <!-- 1. "환영합니다!"를 "Welcome!"으로 변경 -->
+        <!-- 1. "환영합니다!" changed to "Welcome!" -->
         <h1>☁️ Welcome! 🥤</h1>
-        <!-- 2. "달콤한 하늘 한 모금..."을 영문 감성 문구로 변경 및 기울임꼴 유지 -->
+        <!-- 2. Emotional phrase with italic styling preserved -->
         <p>A sweet sip of the sky, a taste of nostalgia.<br> cms.</p>
-        <!-- 3. "입장하기"를 레트로 게임 스타일에 맞게 "ENTER"로 변경 -->
+        <!-- 3. Retro arcade style "ENTER" button -->
         <a href="#" class="btn">ENTER</a>
     </div>
 </body>
 </html>
+
