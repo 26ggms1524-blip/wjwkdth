@@ -18,7 +18,35 @@
             justify-content: center;
             align-items: center;
             overflow: hidden;
+            position: relative;
         }
+
+        /* --- Retro Pixel Cloud Background Effect --- */
+        body::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 200%;
+            height: 100%;
+            /* Creating pixelated clouds using CSS gradients */
+            background-image: 
+                linear-gradient(rgba(255,255,255,0.6) 20px, transparent 0),
+                linear-gradient(90deg, rgba(255,255,255,0.6) 60px, transparent 0),
+                linear-gradient(rgba(255,255,255,0.4) 15px, transparent 0),
+                linear-gradient(90deg, rgba(255,255,255,0.4) 40px, transparent 0);
+            background-size: 200px 150px, 200px 150px, 130px 90px, 130px 90px;
+            background-position: 0 20%, 0 20%, 50px 60%, 50px 60%;
+            /* Makes the pixel clouds float horizontally */
+            animation: floatClouds 25s linear infinite;
+            z-index: 1;
+        }
+
+        @keyframes floatClouds {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(-50%); }
+        }
+
         .container {
             text-align: center;
             background: rgba(255, 255, 255, 0.85);
@@ -27,6 +55,8 @@
             padding: 40px;
             max-width: 450px;
             width: 90%;
+            position: relative;
+            z-index: 2; /* Keeps the content above the floating clouds */
         }
         h1 {
             color: #ff6b81;
@@ -40,6 +70,8 @@
             font-size: 1.2rem;
             line-height: 1.6;
             margin-bottom: 35px;
+            /* Added italic styling for the description */
+            font-style: italic; 
         }
         .btn {
             background-color: #74b9ff;
@@ -52,12 +84,10 @@
             display: inline-block;
             cursor: pointer;
             font-family: 'DungGeunMo', monospace;
-            /* Disabled smooth transition for that snappy, classic arcade response */
             transition: none; 
         }
         .btn:hover {
             background-color: #0984e3;
-            /* Creates a realistic click motion by sinking exactly into the shadow space */
             transform: translate(4px, 4px);
             box-shadow: 0px 0px 0px #2d3436;
         }
@@ -65,7 +95,9 @@
 </head>
 <body>
     <div class="container">
-        <h1>☁️ Cloud Soda 🥤</h1>
+        <!-- Changed the main heading to "Welcome!" -->
+        <h1>☁️ Welcome! 🥤</h1>
+        <!-- Description is now styled in italics -->
         <p>A sweet sip of the sky, a taste of nostalgia.<br>The blue vibe of the good old 90s.</p>
         <a href="#" class="btn">ENTER</a>
     </div>
