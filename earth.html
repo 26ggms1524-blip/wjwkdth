@@ -506,8 +506,198 @@ duration:1
 }
 
 
+// ==============================
+// 반도 / 주요 지형 경계 표시
+// ==============================
 
 
+const peninsulaStyle = {
+
+    color:"#00ffff",
+
+    weight:2,
+
+    fillColor:"#00ffff",
+
+    fillOpacity:0.08
+
+};
+
+
+
+const peninsulas = {
+
+"type":"FeatureCollection",
+
+"features":[
+
+
+{
+"type":"Feature",
+
+"properties":{
+"name":"한반도"
+},
+
+"geometry":{
+
+"type":"Polygon",
+
+"coordinates":[[
+
+[124,39],
+[126,42],
+[130,42],
+[130,34],
+[126,34],
+[124,39]
+
+]]
+
+}
+
+},
+
+
+{
+"type":"Feature",
+
+"properties":{
+"name":"아라비아 반도"
+},
+
+"geometry":{
+
+"type":"Polygon",
+
+"coordinates":[[
+
+[35,30],
+[56,30],
+[55,12],
+[42,12],
+[35,30]
+
+]]
+
+}
+
+},
+
+
+{
+"type":"Feature",
+
+"properties":{
+"name":"인도 반도"
+},
+
+"geometry":{
+
+"type":"Polygon",
+
+"coordinates":[[
+
+[68,23],
+[88,22],
+[80,7],
+[72,10],
+[68,23]
+
+]]
+
+}
+
+},
+
+
+{
+"type":"Feature",
+
+"properties":{
+"name":"이베리아 반도"
+},
+
+"geometry":{
+
+"type":"Polygon",
+
+"coordinates":[
+
+[
+[-10,44],
+[4,44],
+[3,36],
+[-9,36],
+[-10,44]
+]
+
+]
+
+}
+
+},
+
+
+{
+"type":"Feature",
+
+"properties":{
+"name":"스칸디나비아 반도"
+},
+
+"geometry":{
+
+"type":"Polygon",
+
+"coordinates":[
+
+[
+[5,60],
+[30,70],
+[25,55],
+[10,55],
+[5,60]
+]
+
+]
+
+}
+
+}
+
+
+]
+
+};
+
+
+
+L.geoJSON(
+
+peninsulas,
+
+{
+
+style:peninsulaStyle,
+
+
+onEachFeature:function(feature,layer){
+
+layer.bindTooltip(
+
+feature.properties.name
+
+);
+
+}
+
+}
+
+).addTo(map);
+
+
+    
 </script>
 
 
