@@ -1,246 +1,126 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ko">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Global Real-Time Seismograph</title>
-    <!-- Leaflet.js 지도 라이브러리 CSS 로드 -->
-    <link rel="stylesheet" href="https://unpkg.com" />
-    <style>
-        @import url('https://jsdelivr.net');
+<meta charset="UTF-8">
+<title>Live Earthquakes</title>
 
-        body {
-            margin: 0;
-            padding: 0;
-            background: linear-gradient(to bottom, #1a1c2e, #393e46);
-            font-family: 'DungGeunMo', monospace;
-            height: 100vh;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            overflow: hidden;
-            user-select: none;
-        }
+<link
+rel="stylesheet"
+href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
 
-        .hud-container {
-            width: 600px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 10px;
-            z-index: 10;
-        }
+<style>
 
-        .hud-title {
-            color: #ffeaa7;
-            font-size: 1.4rem;
-            text-shadow: 2px 2px 0px #2d3436;
-        }
+html,body{
+margin:0;
+height:100%;
+background:#314b67;
+font-family:Arial;
+}
 
-        .exit-btn {
-            background-color: #74b9ff; 
-            color: white;
-            border: 3px solid #2d3436;
-            box-shadow: 0px 4px 0px #0984e3, 4px 8px 0px #2d3436; 
-            padding: 8px 16px;
-            font-size: 1.2rem; 
-            letter-spacing: 1px; 
-            text-shadow: 2px 2px 0px #0984e3; 
-            cursor: pointer;
-            font-family: 'DungGeunMo', monospace;
-            position: relative;
-            transition: none; 
-        }
-        .exit-btn:hover {
-            background-color: #0984e3;
-            color: #ffeaa7; 
-            box-shadow: 0px 2px 0px #054b82, 4px 6px 0px #2d3436;
-            transform: translateY(2px) translateX(0px);
-            text-shadow: 2px 2px 0px #054b82;
-        }
-        .exit-btn:active {
-            box-shadow: 0px 0px 0px #000, 2px 2px 0px #2d3436;
-            transform: translateY(6px) translateX(2px); 
-        }
+#map{
+width:100%;
+height:100vh;
+}
 
-        /* 오락기 캐비닛과 완벽 대응되는 600x400 규격 모니터 */
-        .monitor-container {
-            position: relative;
-            width: 600px;
-            height: 400px;
-            background-color: #1e272e; 
-            border: 6px solid #ff6b81; 
-            box-shadow: 0px 0px 20px rgba(255, 107, 129, 0.4), 12px 12px 0px #1e2124;
-            padding: 15px;
-            box-sizing: border-box;
-            display: flex;
-            flex-direction: column;
-        }
+.mag{
+color:white;
+font-weight:bold;
+text-shadow:
+0 0 4px black,
+0 0 4px black;
+font-size:12px;
+text-align:center;
+}
 
-        .monitor-header {
-            color: #2ecc71; 
-            font-size: 1.2rem;
-            border-bottom: 2px dashed #2ecc71;
-            padding-bottom: 8px;
-            margin-bottom: 12px;
-            display: flex;
-            justify-content: space-between;
-            z-index: 25;
-        }
+</style>
 
-        /* 실시간 세계지도가 매핑될 프레임 영역 */
-        .map-area {
-            width: 100%;
-            height: 260px;
-            background-color: #05070a;
-            border: 3px solid #2d3436;
-            position: relative;
-            z-index: 5;
-        }
-
-        #map {
-            width: 100%;
-            height: 100%;
-        }
-
-        /* Leaflet 내부 팝업창 폰트 레트로 무드 맞춤 보정 */
-        .leaflet-popup-content-wrapper {
-            font-family: 'DungGeunMo', monospace !important;
-            border: 2px solid #2d3436;
-            border-radius: 4px;
-        }
-
-        .status-footer {
-            margin-top: auto;
-            color: #888;
-            font-size: 0.9rem;
-            display: flex;
-            justify-content: space-between;
-            z-index: 5;
-        }
-        
-        .legend-box {
-            display: flex;
-            gap: 10px;
-            font-size: 0.85rem;
-            color: #ffeaa7;
-        }
-    </style>
 </head>
 <body>
 
-    <div class="hud-container">
-        <div class="hud-title">📡 REAL-TIME GLOBAL SEISMIC MAP</div>
-        <button class="exit-btn" onclick="window.location.href='main.html'">메뉴로 나가기</button>
-    </div>
+<div id="map"></div>
 
-    <div class="monitor-container">
-        
-        <div class="monitor-header">
-            <span>[USGS LIVE DATA INTEGRATION v2.0]</span>
-            <span style="color: #ff3838; animation: blink 0.8s steps(2) infinite alternate;">● REALTIME FEED</span>
-        </div>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
-        <!-- 세계지도 영역 -->
-        <div class="map-area">
-            <div id="map"></div>
-        </div>
+<script>
 
-        <div class="status-footer">
-            <div class="legend-box">
-                <span>규모 범례:</span>
-                <span style="color: #5cc1fc;">● M 4.5 미만</span>
-                <span style="color: #ffb938;">● M 6.0 미만</span>
-                <span style="color: #ff3838;">● M 6.0 이상</span>
-            </div>
-            <span id="loadStatus">DATA: LOADING...</span>
-        </div>
+const map=L.map("map",{
+zoomControl:true,
+worldCopyJump:true
+}).setView([20,0],2);
 
-    </div>
+L.tileLayer(
+"https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
+{
+maxZoom:8
+}).addTo(map);
 
-    <!-- Leaflet.js 세계지도 핵심 엔진 스크립트 로드 -->
-    <script src="https://unpkg.com"></script>
-    <script>
-        let map;
-        const loadStatus = document.getElementById('loadStatus');
+let layer;
 
-        function initGlobalMap() {
-            // 위도 20, 경도 0을 중심으로 줌레벨 1 설정
-            map = L.map('map', {
-                attributionControl: false,
-                zoomControl: false
-            }).setView([20, 0], 1);
+async function loadEarthquakes(){
 
-            // 도트 감성에 어울리는 카토DB 다크매터 타일 레이어 장착
-            L.tileLayer('https://{s}://{z}/{x}/{y}{r}.png', {
-                maxZoom: 10,
-                minZoom: 1
-            }).addTo(map);
+if(layer){
+layer.remove();
+}
 
-            fetchLatestEarthquakes();
-        }
+const url="https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/2.5_day.geojson";
 
-        // USGS(미국지질조사국) 공식 서버에서 최근 24시간 발생한 규모 2.5 이상의 전세계 실시간 데이터 연동
-        function fetchLatestEarthquakes() {
-            const ugsgUrl = 'https://usgs.gov';
+const data=await fetch(url).then(r=>r.json());
 
-            fetch(ugsgUrl)
-                .then(response => response.json())
-                .then(data => {
-                    plotSeismicPoints(data.features);
-                    loadStatus.innerText = `FEED OK (COUNT: ${data.features.length})`;
-                })
-                .catch(err => {
-                    console.error("데이터 로딩 실패:", err);
-                    loadStatus.innerText = "FEED ERROR";
-                });
-        }
+layer=L.layerGroup().addTo(map);
 
-        // 지진 데이터를 좌표계로 수치화하여 지도 상에 원형 마커 배치
-        function plotSeismicPoints(earthquakes) {
-            earthquakes.forEach(eq => {
-                const coordinates = eq.geometry.coordinates;
-                const lng = coordinates[0]; // 경도
-                const lat = coordinates[1]; // 위도
-                const mag = eq.properties.mag;  // 규모
-                const place = eq.properties.place; // 발생 위치
+data.features.forEach(q=>{
 
-                // 지진 규모 세기에 따라 점의 색상을 다이나믹하게 변경
-                let markerColor = '#5cc1fc'; 
-                if (mag >= 6.0) {
-                    markerColor = '#ff3838'; 
-                } else if (mag >= 4.5) {
-                    markerColor = '#ffb938'; 
-                }
+const mag=q.properties.mag;
+const place=q.properties.place;
 
-                // 규모가 커질수록 지도상의 도트 반지름 크기도 비례해서 커지도록 연산
-                let markerRadius = mag * 1.5;
-                if (markerRadius < 4) markerRadius = 4; 
+const lat=q.geometry.coordinates[1];
+const lon=q.geometry.coordinates[0];
 
-                // 원형 마커 배치
-                const dotMarker = L.circleMarker([lat, lng], {
-                    radius: markerRadius,
-                    fillColor: markerColor,
-                    color: '#2d3436', 
-                    weight: 1.5,
-                    opacity: 1,
-                    fillOpacity: 0.8
-                }).addTo(map);
+const radius=mag*4+4;
 
-                // 점을 클릭했을 때 도트 글꼴 말풍선 정보 표출
-                const popupContent = `
-                    <div style="font-size:0.9rem; line-height:1.4;">
-                        <strong style="color:${markerColor}; font-size:1.1rem;">규모: M ${mag.toFixed(1)}</strong><br>
-                        <strong>위치:</strong> ${place}<br>
-                        <span style="color:#888; font-size:0.75rem;">좌표: ${lat.toFixed(2)}, ${lng.toFixed(2)}</span>
-                    </div>
-                `;
-                dotMarker.bindPopup(popupContent);
-            });
-        }
+L.circleMarker([lat,lon],{
 
-        window.addEventListener('DOMContentLoaded', initGlobalMap);
-    </script>
+radius:radius,
+
+color:"#ff6600",
+
+fillColor:"#ffb000",
+
+fillOpacity:0.8,
+
+weight:1
+
+}).bindPopup(
+
+"<b>"+place+"</b><br>" +
+
+"규모 : "+mag
+
+).addTo(layer);
+
+L.marker([lat,lon],{
+
+icon:L.divIcon({
+
+className:"",
+
+html:'<div class="mag">'+mag.toFixed(1)+'</div>',
+
+iconSize:[30,14]
+
+})
+
+}).addTo(layer);
+
+});
+
+}
+
+loadEarthquakes();
+
+setInterval(loadEarthquakes,60000);
+
+</script>
+
 </body>
 </html>
