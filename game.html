@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Retro Cloud Jumper - Game Stage</title>
+    <title>Retro Arcade - Main Menu</title>
     <style>
         /* 레트로 픽셀 웹폰트 로드 */
         @import url('https://jsdelivr.net');
@@ -11,7 +11,7 @@
         body {
             margin: 0;
             padding: 0;
-            background: linear-gradient(to bottom, #1a1c2e, #393e46);
+            background: linear-gradient(to bottom, #a1c4fd, #c2e9fb); 
             font-family: 'DungGeunMo', monospace;
             height: 100vh;
             display: flex;
@@ -19,279 +19,267 @@
             justify-content: center;
             align-items: center;
             overflow: hidden;
+            position: relative;
             user-select: none;
         }
 
-        /* 상단 컨트롤러 및 스코어 랙 */
-        .hud-container {
-            width: 600px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 10px;
-            z-index: 10;
-        }
-
-        .hud {
-            color: #ffeaa7;
-            font-size: 1.5rem;
-            text-shadow: 2px 2px 0px #2d3436;
-        }
-
-        /* 소다색 베이스와 고전 아케이드 픽셀 룩 스타일링 */
-        .exit-btn {
-            background-color: #74b9ff; 
-            color: white;
-            border: 3px solid #2d3436;
-            box-shadow: 0px 4px 0px #0984e3, 4px 8px 0px #2d3436; 
-            padding: 8px 16px;
-            font-size: 1.2rem; 
-            letter-spacing: 1px; 
-            text-shadow: 2px 2px 0px #0984e3; 
-            cursor: pointer;
-            font-family: 'DungGeunMo', monospace;
-            position: relative;
-            transition: none; 
-        }
-        .exit-btn:hover {
-            background-color: #0984e3;
-            color: #ffeaa7; 
-            box-shadow: 0px 2px 0px #054b82, 4px 6px 0px #2d3436;
-            transform: translateY(2px) translateX(0px);
-            text-shadow: 2px 2px 0px #054b82;
-        }
-        .exit-btn:active {
-            box-shadow: 0px 0px 0px #000, 2px 2px 0px #2d3436;
-            transform: translateY(6px) translateX(2px); 
-        }
-
-        /* 8비트 게임기 스타일 메인 스크린 컨테이너 */
-        .game-container {
-            position: relative;
-            width: 600px;
-            height: 400px;
-            background-color: #5c94fc; 
-            border: 6px solid #ff6b81; 
-            box-shadow: 0px 0px 20px rgba(255, 107, 129, 0.4), 12px 12px 0px #1e2124;
-            overflow: hidden;
-        }
-
-        /* CRT 모니터 스타일 격자 텍스처 무늬 효과 */
-        .game-container::before {
+        /* ☁️ 무한 루프 레트로 도트 구름 레이어 */
+        body::before {
             content: "";
             position: absolute;
-            width: 100%;
+            top: 0;
+            left: 0;
+            width: 200%;
             height: 100%;
             background-image: 
-                linear-gradient(rgba(255, 255, 255, 0.08) 2px, transparent 0),
-                linear-gradient(90deg, rgba(255, 255, 255, 0.08) 2px, transparent 0);
+                linear-gradient(90deg, rgba(255,255,255,0.6) 80px, transparent 0),
+                linear-gradient(rgba(255,255,255,0.6) 30px, transparent 0),
+                linear-gradient(90deg, rgba(255,255,255,0.4) 50px, transparent 0),
+                linear-gradient(rgba(255,255,255,0.4) 20px, transparent 0),
+                linear-gradient(rgba(255, 255, 255, 0.15) 4px, transparent 0),
+                linear-gradient(90deg, rgba(255, 255, 255, 0.15) 4px, transparent 0);
+            background-size: 240px 160px, 240px 160px, 160px 100px, 160px 100px, 8px 8px, 8px 8px;
+            background-position: 40px 20%, 40px 20%, 120px 55%, 120px 55%, 0 0, 0 0;
+            animation: menuClouds 25s linear infinite;
+            z-index: 1;
+        }
+
+        @keyframes menuClouds {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(-50%); }
+        }
+
+        /* 🕹️ 아케이드 기기 캐비닛 프레임 본체 하우징 */
+        .arcade-cabinet {
+            background: #2d3436; 
+            border: 6px solid #ff6b81; 
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0px 15px 0px #1e2124, 0px 0px 30px rgba(255, 107, 129, 0.5);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            z-index: 2;
+        }
+
+        /* 📺 오락기 CRT 브라운관 스크린 튜브 뷰포트 박스 */
+        .game-container {
+            position: relative;
+            width: 540px;
+            height: 340px;
+            background: linear-gradient(to bottom, #a1c4fd, #c2e9fb); 
+            border: 4px solid #000;
+            border-radius: 6px;
+            overflow: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        /* CRT 브라운관 주사선 특수 격자 필터 스크린 */
+        .game-container::after {
+            content: "";
+            position: absolute;
+            width: 100%; height: 100%;
+            background-image: 
+                linear-gradient(rgba(255, 255, 255, 0.04) 2px, transparent 0),
+                linear-gradient(90deg, rgba(255, 255, 255, 0.04) 2px, transparent 0);
             background-size: 16px 16px;
             pointer-events: none;
             z-index: 10;
         }
 
-        .game-obj {
+        /* --- 화면 내부 스크린 UI --- */
+        .menu-screen {
             position: absolute;
+            width: 100%; height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            background: rgba(255, 255, 255, 0.2); 
+        }
+
+        .menu-title {
+            color: #ffffff;
+            font-size: 2.6rem;
+            margin-top: 0;
+            margin-bottom: 30px;
+            text-shadow: 4px 4px 0px #ff6b81, -2px -2px 0px #2d3436;
+            animation: pulse 1s infinite alternate;
+        }
+
+        .menu-list {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            width: 250px;
+        }
+
+        /* 버튼 인테리어 : 청량한 소다 블루 테마 슬롯 */
+        .menu-item {
+            background-color: #74b9ff; 
+            color: white;
+            padding: 12px 0;
+            font-size: 1.3rem;
+            text-align: center;
+            border: 3px solid #2d3436;
+            box-shadow: 4px 4px 0px #2d3436;
+            cursor: pointer;
+            font-family: 'DungGeunMo', monospace;
+            transition: none; 
+        }
+        .menu-item:hover {
+            background-color: #0984e3;
+            color: #ffeaa7; 
+            transform: translate(2px, 2px);
+            box-shadow: 2px 2px 0px #2d3436;
+        }
+        .menu-item:active {
+            transform: translate(4px, 4px);
+            box-shadow: 0px 0px 0px #2d3436;
+        }
+
+        /* 2번 지진 모델링 버튼용 파스텔 핑크 커스텀 스킨 */
+        .seismic-btn { background-color: #ff7979; }
+        .seismic-btn:hover { background-color: #ff5252; }
+
+        /* 🎮 오락기 하단 하드웨어 컨트롤 패널 데크 바 */
+        .control-panel {
+            width: 540px;
+            height: 70px;
+            background: #1e2124;
+            margin-top: 15px;
+            border: 4px solid #000;
+            border-radius: 4px;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 40px;
             box-sizing: border-box;
         }
 
-        /* 플레이어 (도트 캐릭터) */
-        #player {
-            width: 24px;
-            height: 32px;
-            background-color: #ff6b81;
-            border: 3px solid #2d3436;
-            box-shadow: inset -4px -4px 0px #ee5253;
-            z-index: 5;
-        }
-
-        /* 도트 구름 발판 */
-        .platform {
-            height: 16px;
-            background-color: #ffffff;
-            border: 3px solid #2d3436;
-            box-shadow: inset 0 -4px 0px #b2bec3; 
-            z-index: 4;
-        }
-
-        /* 레트로 음료수 캔 아이템 */
-        .item {
-            width: 16px;
-            height: 24px;
-            background-color: #ffeaa7;
-            border: 2px solid #2d3436;
-            box-shadow: inset -3px -3px 0px #fdcb6e;
-            animation: itemFloat 0.6s ease-in-out infinite alternate;
-            z-index: 4;
-        }
-
-        /* --- 💬 [추가] 상단 NPC 레이아웃 및 대사 말풍선 시스템 --- */
-        .npc-section {
-            position: absolute;
-            top: 15px;
-            left: 20px;
-            width: 560px;
-            display: flex;
-            align-items: center;
-            gap: 15px;
-            z-index: 20;
-        }
-
-        /* 초록 슬라임 가이드 캐릭터 */
-        .npc-guide {
-            width: 32px;
-            height: 26px;
-            background-color: #a8e6cf;
-            border: 3px solid #2d3436;
-            border-radius: 4px;
-            box-shadow: inset -5px -5px 0px #81c784;
-            flex-shrink: 0;
+        /* 조이스틱 조작 레버 모듈 */
+        .joystick-wrapper {
             position: relative;
-            animation: npcSquish 0.4s infinite alternate;
+            width: 40px; height: 40px;
         }
-        .npc-guide::before {
-            content: "";
+        .joystick-base {
             position: absolute;
-            top: 7px; right: 5px;
-            width: 4px; height: 4px;
-            background-color: #000;
-            box-shadow: -10px 0px #000;
+            width: 30px; height: 12px;
+            background: #57606f;
+            border: 3px solid #000;
+            border-radius: 50%;
+            bottom: 0; left: 5px;
+        }
+        .joystick-stick {
+            position: absolute;
+            width: 6px; height: 26px;
+            background: #ced6e0;
+            border: 2px solid #000;
+            bottom: 6px; left: 15px;
+            transform-origin: bottom center;
+            animation: stickWobble 2s ease-in-out infinite;
+        }
+        .joystick-knob {
+            position: absolute;
+            width: 18px; height: 18px;
+            background: #ff6b81; 
+            border: 3px solid #000;
+            border-radius: 50%;
+            top: -14px; left: -8px;
+            box-shadow: inset -3px -3px 0px #e85a71;
         }
 
-        /* 옛날 알피지 게임 스타일의 말풍선 대사 창 */
-        .speech-bubble {
-            background-color: rgba(255, 255, 255, 0.92);
-            border: 3px solid #2d3436;
-            border-radius: 6px;
-            box-shadow: 4px 4px 0px rgba(0,0,0,0.15);
-            padding: 10px 15px;
-            color: #2d3436;
-            font-size: 1rem;
-            line-height: 1.4;
+        /* 아케이드 게임 파스텔 물리 액션 단추 버튼 스펙트럼 */
+        .action-buttons {
+            display: flex;
+            gap: 14px;
+        }
+        .arcade-button {
+            width: 24px; height: 24px;
+            border-radius: 50%;
+            border: 3px solid #000;
+            cursor: pointer;
+            position: relative;
+        }
+        .arcade-button:active {
+            transform: translateY(3px);
+        }
+
+        /* 파스텔 솜사탕 톤 */
+        .arc-pink { 
+            background: #ff7979; /* 딸기 밀크 핑크 버튼 */
+            box-shadow: 0px 4px 0px #b33939; 
+        }
+        .arc-pink:active { box-shadow: 0px 1px 0px #b33939; }
+
+        .arc-blue { 
+            background: #74b9ff; /* 네온 소다 블루 버튼 */
+            box-shadow: 0px 4px 0px #0984e3; 
+        }
+        .arc-blue:active { box-shadow: 0px 1px 0px #0984e3; }
+
+        .panel-hint {
+            position: absolute;
+            bottom: -22px;
+            left: 0;
             width: 100%;
-            height: 40px;
-            display: flex;
-            align-items: center;
-            position: relative;
-            cursor: pointer; /* 클릭해서 다음 대사로 넘기기 */
-        }
-        /* 말풍선 왼쪽 꼬리 꼭짓점 화살표 */
-        .speech-bubble::after {
-            content: "";
-            position: absolute;
-            left: -10px; top: 15px;
-            border-width: 5px 10px 5px 0;
-            border-style: solid;
-            border-color: transparent #2d3436 transparent transparent;
+            text-align: center;
+            color: #888;
+            font-size: 0.8rem;
         }
 
-        /* 대사창 우측 하단 깜빡이는 [다음▼] 지시등 */
-        .next-indicator {
-            position: absolute;
-            right: 10px;
-            bottom: 4px;
-            font-size: 0.75rem;
-            color: #ff6b81;
-            animation: blink 0.5s steps(2) infinite alternate;
+        /* 아케이드 모션 키프레임 목록 */
+        @keyframes stickWobble {
+            0%, 100% { transform: rotate(0deg); }
+            30% { transform: rotate(8deg); }
+            70% { transform: rotate(-8deg); }
         }
-
-        @keyframes npcSquish { 0% { transform: scaleY(1); } 100% { transform: scaleY(0.85) translateY(2px); } }
-        @keyframes itemFloat { 0% { transform: translateY(0); } 100% { transform: translateY(-6px); } }
-        .controls-guide { margin-top: 15px; color: #b2bec3; font-size: 1rem; text-align: center; }
+        @keyframes pulse { 0% { transform: scale(1); } 100% { transform: scale(1.03); } }
     </style>
 </head>
 <body>
 
-    <!-- 상단 컨트롤 보드 영역 -->
-    <div class="hud-container">
-        <div class="hud">SCORE: <span id="scoreVal">000</span></div>
-        <button class="exit-btn" onclick="window.location.href='main.html'">메뉴로 나가기</button>
-    </div>
-
-    <div class="game-container" id="gameScreen">
+    <!-- 🕹️ 레트로 게임기 외곽 하우징 프레임 -->
+    <div class="arcade-cabinet">
         
-        <!-- 💬 상단 NPC 슬라임 가이드 배치 단락 (클릭 시 다음 대사로 패스) -->
-        <div class="npc-section">
-            <div class="npc-guide"></div>
-            <div class="speech-bubble" id="speechBox" onclick="nextDialogue()">
-                <span id="speechText">가이드 로딩 중...</span>
-                <span class="next-indicator">클릭▼</span>
+        <!-- 📺 오락기 모니터 화면 구역 -->
+        <div class="game-container">
+            
+            <div class="menu-screen">
+                <div class="menu-title">SELECT MENU</div>
+                
+                <div class="menu-list">
+                    <div class="menu-item" onclick="window.location.href='game.html'">1. 도트 게임하기</div>
+                    <div class="menu-item seismic-btn" onclick="window.location.href='earth.html'">2. 지진 모델링</div>
+                </div>
             </div>
+            
         </div>
 
-        <!-- 주인공 캐릭터 플레이어 (처음부터 바로 배치 상태) -->
-        <div id="player" class="game-obj" style="display: block;"></div>
-        
+        <!-- 🕹️ 오락기 본체 하단 스틱/버튼 컨트롤 보드 구역 -->
+        <div class="control-panel">
+            <!-- 조이스틱 레버 연출 -->
+            <div class="joystick-wrapper">
+                <div class="joystick-base"></div>
+                <div class="joystick-stick">
+                    <div class="joystick-knob"></div>
+                </div>
+            </div>
+            
+            <!-- 🔗 실제 링크 제어 스위치 기능을 장착한 컬러 물리 버튼 랙 -->
+            <div class="action-buttons">
+                <!-- 핑크 버튼: 1번 게임 페이지 점프 연동 -->
+                <div class="arcade-button arc-pink" title="Go to Game" onclick="window.location.href='game.html'"></div>
+                <!-- 소다 블루 버튼: 2번 지진 모델링 페이지 점프 연동 -->
+                <div class="arcade-button arc-blue" title="Go to Seismic" onclick="window.location.href='earth.html'"></div>
+            </div>
+
+            <div class="panel-hint">* 하단 둥근 컬러 단추들을 클릭해도 각 화면으로 링크 이동합니다!</div>
+        </div>
+
     </div>
-
-    <!-- 하단 고정 키 조작 가이드 -->
-    <div class="controls-guide">[◀] [▶] 이동 &nbsp;&nbsp;|&nbsp;&nbsp; [SPACE] 또는 [▲] 점프</div>
-
-    <script>
-        const screen = document.getElementById('gameScreen');
-        const playerEl = document.getElementById('player');
-        const scoreEl = document.getElementById('scoreVal');
-        const speechText = document.getElementById('speechText');
-
-        // 게임 핵심 물리 계수
-        const screenWidth = 600; const screenHeight = 400;
-        let player = { x: 280, y: 280, vx: 0, vy: 0, width: 24, height: 32, isGrounded: false };
-        let score = 0; const gravity = 0.4; const jumpForce = -9.5; const moveSpeed = 4.5;
-        const keys = {};
-
-        const platforms = [
-            { x: 0, y: 380, width: 600 }, { x: 80, y: 300, width: 120 }, { x: 380, y: 280, width: 140 },
-            { x: 220, y: 210, width: 140 }, { x: 40, y: 140, width: 110 }, { x: 440, y: 130, width: 100 }, { x: 250, y: 90, width: 100 }
-        ];
-        
-        let items = [
-            { x: 130, y: 260, active: true }, { x: 450, y: 240, active: true }, { x: 280, y: 170, active: true },
-            { x: 90, y: 100, active: true }, { x: 480, y: 90, active: true }, { x: 290, y: 50, active: true }
-        ];
-
-        // 💬 NPC 순차 출력 대사 데이터 맵
-        const dialogues = [
-            "안녕! 이 게임의 가이드를 맡은 슬라임이야! 뽈뽈..",
-            "방향키 [◀ / ▶] 나 [A / D] 키로 좌우로 걸어다닐 수 있어!",
-            "공중으로 뛸 때는 [▲] 이나 [SPACE] 버튼을 꾹 눌러봐!",
-            "발판 구름들을 점프하며 떠다니는 음료수 캔을 몽땅 모아봐!"
-        ];
-        let currentDiagIndex = 0;
-        let charIndex = 0;
-        let typingTimer;
-
-        // --- 💬 NPC 타이핑 텍스트 연출 애니메이션 함수 ---
-        function typeWriter() {
-            const currentSentence = dialogues[currentDiagIndex];
-            if (charIndex < currentSentence.length) {
-                speechText.innerText = currentSentence.substring(0, charIndex + 1);
-                charIndex++;
-                typingTimer = setTimeout(typeWriter, 40); // 40ms 단위로 한 글자씩 출력
-            }
-        }
-
-        // 말풍선을 마우스로 누르면 다음 대사로 순차 전개
-        function nextDialogue() {
-            clearTimeout(typingTimer);
-            currentDiagIndex++;
-            
-            // 모든 가이드 대사가 끝나면 다시 1번째 대사로 무한 순환 루프 처리
-            if (currentDiagIndex >= dialogues.length) {
-                currentDiagIndex = 0;
-            }
-            
-            charIndex = 0;
-            typeWriter();
-            
-            // 대사 넘길 때마다 작게 또각거리는 아케이드 오디오 피드백 사운드 출력
-            playBeep(400, 0.03);
-        }
-
-        // --- 🎵 [신규 추가] Web Audio API 순수 내부 코딩형 8비트 배경음악 합성 신디사이저 ---
-        let audioCtx = null;
-        let bgmInterval = null;
-
-        function startRetroBGM() {
-            // 브라우저 보안 규정상 사용자 첫 인터랙션(키 누름 등) 발생 시 오디오 노드 가동 시작
-            if (!audioCtx) {
-                audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+</body>
+</html>
