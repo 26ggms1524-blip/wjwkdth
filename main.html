@@ -52,7 +52,7 @@
         /* 🕹️ 아케이드 기기 캐비닛 프레임 본체 하우징 */
         .arcade-cabinet {
             background: #2d3436; 
-            border: 6px solid #ff6b81; 
+            border: 6px solid #ff6b81; /* 본체 마감 핑크 라인 테두리 */
             padding: 20px;
             border-radius: 12px;
             box-shadow: 0px 15px 0px #1e2124, 0px 0px 30px rgba(255, 107, 129, 0.5);
@@ -208,37 +208,18 @@
             transform: translateY(3px);
         }
 
+        /* 파스텔 솜사탕 톤 */
         .arc-pink { 
-            background: #ff7979; 
+            background: #ff7979; /* 딸기 밀크 핑크 버튼 */
             box-shadow: 0px 4px 0px #b33939; 
         }
         .arc-pink:active { box-shadow: 0px 1px 0px #b33939; }
 
-        .arc-yellow { 
-            background: #ffeaa7; 
-            box-shadow: 0px 4px 0px #fdcb6e; 
+        .arc-blue { 
+            background: #74b9ff; /* 네온 소다 블루 버튼 */
+            box-shadow: 0px 4px 0px #0984e3; 
         }
-        .arc-yellow:active { box-shadow: 0px 1px 0px #fdcb6e; }
-
-        /* 🤖 화면 전체 공간을 자유롭게 튕겨 노는 슬라임 동료 */
-        .npc-pet {
-            position: absolute;
-            width: 32px; height: 26px;
-            background-color: #a8e6cf;
-            border: 3px solid #2d3436;
-            border-radius: 4px;
-            box-shadow: inset -5px -5px 0px #81c784;
-            z-index: 5; 
-            animation: slimeSquish 0.3s infinite alternate;
-        }
-        .npc-pet::before {
-            content: "";
-            position: absolute;
-            top: 7px; right: 5px;
-            width: 4px; height: 4px;
-            background-color: #000;
-            box-shadow: -10px 0px #000;
-        }
+        .arc-blue:active { box-shadow: 0px 1px 0px #0984e3; }
 
         .panel-hint {
             position: absolute;
@@ -256,7 +237,6 @@
             30% { transform: rotate(8deg); }
             70% { transform: rotate(-8deg); }
         }
-        @keyframes slimeSquish { 0% { transform: scaleY(1); } 100% { transform: scaleY(0.82) translateY(2px); } }
         @keyframes pulse { 0% { transform: scale(1); } 100% { transform: scale(1.03); } }
     </style>
 </head>
@@ -266,7 +246,7 @@
     <div class="arcade-cabinet">
         
         <!-- 📺 오락기 모니터 화면 구역 -->
-        <div class="game-container" id="screenView">
+        <div class="game-container">
             
             <div class="menu-screen">
                 <div class="menu-title">SELECT MENU</div>
@@ -276,9 +256,6 @@
                     <div class="menu-item seismic-btn" onclick="window.location.href='earth.html'">2. 지진 모델링</div>
                 </div>
             </div>
-
-            <!-- 스크린 내부를 대각선 자유자재로 배회하는 픽셀 슬라임 -->
-            <div class="npc-pet" id="menuPet"></div>
             
         </div>
 
@@ -296,7 +273,13 @@
             <div class="action-buttons">
                 <!-- 핑크 버튼: 1번 게임 페이지 점프 연동 -->
                 <div class="arcade-button arc-pink" title="Go to Game" onclick="window.location.href='game.html'"></div>
-                <!-- 노란 버튼: 슬라임 펫을 깜짝 놀라게 하는 기믹 스위치 -->
-                <div class="arcade-button arc-yellow" title="Booster Pet" onclick="scareSlime()"></div>
+                <!-- 소다 블루 버튼: 2번 지진 모델링 페이지 점프 연동 -->
+                <div class="arcade-button arc-blue" title="Go to Seismic" onclick="window.location.href='earth.html'"></div>
             </div>
 
+            <div class="panel-hint">* 하단 둥근 컬러 단추들을 클릭해도 각 화면으로 링크 이동합니다!</div>
+        </div>
+
+    </div>
+</body>
+</html>
