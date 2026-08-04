@@ -1,45 +1,73 @@
 <!DOCTYPE html>
-<html lang="ko">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>내 홈페이지 대문</title>
+    <title>Cloud Soda - 90's Retro Taste</title>
     <style>
+        /* Imported a reliable retro pixel font (DungGeunMo) */
+        @import url('https://jsdelivr.net');
+        
         body {
-            font-family: Arial, sans-serif;
-            background-color: #f4f4f9;
-            color: #333;
-            text-align: center;
-            padding-top: 100px;
             margin: 0;
+            padding: 0;
+            background: linear-gradient(to bottom, #a1c4fd, #c2e9fb);
+            font-family: 'DungGeunMo', monospace;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+        }
+        .container {
+            text-align: center;
+            background: rgba(255, 255, 255, 0.85);
+            border: 4px solid #2d3436;
+            box-shadow: 8px 8px 0px #2d3436;
+            padding: 40px;
+            max-width: 450px;
+            width: 90%;
         }
         h1 {
-            font-size: 48px;
-            color: #2c3e50;
-            margin-bottom: 20px;
+            color: #ff6b81;
+            font-size: 3rem;
+            margin-top: 0;
+            margin-bottom: 15px;
+            text-shadow: 3px 3px 0px #ffeaa7;
         }
         p {
-            font-size: 18px;
-            color: #555;
-            margin-bottom: 40px;
+            color: #2d3436;
+            font-size: 1.2rem;
+            line-height: 1.6;
+            margin-bottom: 35px;
         }
-        a {
-            display: inline-block;
-            background-color: #3498db;
+        .btn {
+            background-color: #74b9ff;
             color: white;
             padding: 12px 24px;
+            font-size: 1.4rem;
+            border: 3px solid #2d3436;
+            box-shadow: 4px 4px 0px #2d3436;
             text-decoration: none;
-            border-radius: 5px;
-            font-weight: bold;
+            display: inline-block;
+            cursor: pointer;
+            font-family: 'DungGeunMo', monospace;
+            /* Disabled smooth transition for that snappy, classic arcade response */
+            transition: none; 
         }
-        a:hover {
-            background-color: #2980b9;
+        .btn:hover {
+            background-color: #0984e3;
+            /* Creates a realistic click motion by sinking exactly into the shadow space */
+            transform: translate(4px, 4px);
+            box-shadow: 0px 0px 0px #2d3436;
         }
     </style>
 </head>
 <body>
-    <h1>환영합니다!</h1>
-    <p>여기는 나만의 멋진 웹사이트 대문 화면입니다.</p>
-    <a href="#">시작하기</a>
+    <div class="container">
+        <h1>☁️ Cloud Soda 🥤</h1>
+        <p>A sweet sip of the sky, a taste of nostalgia.<br>The blue vibe of the good old 90s.</p>
+        <a href="#" class="btn">ENTER</a>
+    </div>
 </body>
 </html>
