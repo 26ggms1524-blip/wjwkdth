@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Retro Cloud Jumper</title>
+    <style>
+        /* 레트로 픽셀 웹폰트 로드 */
+        @import url('https://jsdelivr.net');
+
+        body {
+            margin: 0;
+            padding: 0;
+            background: linear-gradient(to bottom, #1a1c2e, #393e46);
+            font-family: 'DungGeunMo', monospace;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+            user-select: none;
+        }
+
+        /* 게임 상단 HUD (점수판) */
+        .hud {
+            color: #ffeaa7;
+            font-size: 1.5rem;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 0px #2d3436;
+            z-index: 10;
+        }
+
+        /* 8비트 게임기 스타일 캔버스 컨테이너 */
+        .game-container {
+            position: relative;
+            width: 600px;
+            height: 400px;
+            background-color: #5c94fc; /* 고전 게임 특유의 하늘색 */
+            border: 6px solid #2d3436;
+            box-shadow: 12px 12px 0px #23272a;
+            overflow: hidden;
+        }
+
+        /* 배경을 구성하는 모자이크 도트 그리드 */
+        .game-container::before {
+            content: "";
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background-image: 
+                linear-gradient(rgba(255, 255, 255, 0.1) 2px, transparent 0),
+                linear-gradient(90deg, rgba(255, 255, 255, 0.1) 2px, transparent 0);
+            background-size: 16px 16px;
+            pointer-events: none;
+        }
+
+        /* 게임 내부 오브젝트 공통 스타일 */
+        .game-obj {
+            position: absolute;
+            box-sizing: border-box;
+        }
+
+        /* 플레이어 (도트 캐릭터) */
+        #player {
+            width: 24px;
+            height: 32px;
+            background-color: #ff6b81;
+            border: 3px solid #2d3436;
+            box-shadow: inset -4px -4px 0px #ee5253;
+            transition: transform 0.1s linear;
+        }
+
+        /* 도트 구름 발판 */
+        .platform {
+            height: 16px;
+            background-color: #ffffff;
+            border: 3px solid #2d3436;
+            box-shadow: inset 0 -4px 0px #b2bec3; 
+        }
+
+        /* 획득해야 할 레트로 음료수 캔 */
+        .item {
+            width: 16px;
+            height: 24px;
+            background-color: #ffeaa7;
+            border: 2px solid #2d3436;
+            box-shadow: inset -3px -3px 0px #fdcb6e;
+            animation: itemFloat 0.6s ease-in-out infinite alternate;
+        }
+
+        @keyframes itemFloat {
+            0% { transform: translateY(0); }
+            100% { transform: translateY(-6px); }
+        }
+
+        /* 하단 안내 가이드 */
+        .controls-guide {
+            margin-top: 15px;
+            color: #b2bec3;
+            font-size: 1rem;
+            text-align: center;
+        }
+
+        /* --- 추가된 코드: 레트로 설명 팝업 알림창 --- */
+        .modal-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.6);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 100;
+        }
+
+        .modal-box {
+            background-color: #fff;
+            border: 4px solid #2d3436;
+            box-shadow: 6px 6px 0px #2d3436;
+            width: 380px;
+            padding: 30px;
+            text-align: center;
+            box-sizing: border-box;
+        }
+
+        .modal-title {
+            font-size: 1.8rem;
+            color: #ff6b81;
+            margin-top: 0;
+            margin-bottom: 20px;
+            text-shadow: 2px 2px 0px #ffeaa7;
+        }
+
+        .modal-desc {
+            font-size: 1.1rem;
+            color: #2d3436;
+            line-height: 1.8;
+            margin-bottom: 25px;
+            text-align: left;
+            background: #f5f6fa;
+            padding: 15px;
+            border: 2px dashed #b2bec3;
+        }
+
+        .start-btn {
+            background-color: #1dd1a1;
+            color: white;
+            padding: 10px 20px;
+            font-size: 1.2rem;
+            border: 3px solid #2d3436;
+            box-shadow: 4px 4px 0px #2d3436;
+            cursor: pointer;
+            font-family: 'DungGeunMo', monospace;
+        }
+
+        .start-btn:hover {
+            background-color: #10ac84;
+            transform: translate(2px, 2px);
+            box-shadow: 2px 2px 0px #2d3436;
+        }
+
+        .start-btn:active {
+            transform: translate(4px, 4px);
+            box-shadow: 0px 0px 0px #2d3436;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- 점수 출력 구역 -->
+    <div class="hud">SCORE: <span id="scoreVal">000</span></div>
+
+    <!-- 게임 스크린 -->
+    <div class="game-container" id="gameScreen">
+        <!-- 플레이어 캐릭터 -->
+        <div id="player" class="game-obj"></div>
+
+        <!-- 추가된 코드: 게임 시작 설명 모달 창 -->
+        <div class="modal-overlay" id="guideModal">
+            <div class="modal-box">
+                <div class="modal-title">HOW TO PLAY</div>
+                <div class="modal-desc">
+                    • ◀ / ▶ : Move Left & Right<br>
+                    • ▲ / SPACE : Jump Up<br><br>
+                    Jump on the pixel clouds and collect all the retro soda cans to get a high score!
+                </div>
+                <button class="start-btn" id="startBtn">START GAME</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 하단 고정 안내 가이드 -->
+    <div class="controls-guide">
+        [◀] [▶] MOVE &nbsp;&nbsp;|&nbsp;&nbsp; [SPACE] or [▲] JUMP
+    </div>
+
+    <script>
+        const screen = document.getElementById('gameScreen');
+        const playerEl = document.getElementById('player');
+        const scoreEl = document.getElementById('scoreVal');
+        const guideModal = document.getElementById('guideModal');
+        const startBtn = document.getElementById('startBtn');
+
+        const screenWidth = 600;
+        const screenHeight = 400;
+        
+        let player = {
+            x: 280,
+            y: 300,
+            vx: 0,
+            vy: 0,
+            width: 24,
+            height: 32,
+            isGrounded: false
+        };
+
+        let score = 0;
+        const gravity = 0.4;
+        const jumpForce = -9.5;
+        const moveSpeed = 4.5;
+        
+        const keys = {};
+        let gameActive = false; // 추가된 코드: 설명창이 닫히기 전까지 물리 연동 제한용 플래그
+
+        const platforms = [
+            { x: 0, y: 380, width: 600 },
+            { x: 80, y: 300, width: 120 },
+            { x: 380, y: 280, width: 140 },
+            { x: 220, y: 210, width: 140 },
+            { x: 40, y: 140, width: 110 },
+            { x: 440, y: 130, width: 100 },
+            { x: 250, y: 90, width: 100 }
+        ];
+
+        let items = [
+            { x: 130, y: 260, active: true },
+            { x: 450, y: 240, active: true },
+            { x: 280, y: 170, active: true },
+            { x: 90, y: 100, active: true },
+            { x: 480, y: 90, active: true },
+            { x: 290, y: 50, active: true }
+        ];
+
+        function initMap() {
+            platforms.forEach((plat, index) => {
+                if(index > 0) {
+                    const el = document.createElement('div');
+                    el.className = 'game-obj platform';
+                    el.style.left = plat.x + 'px';
+                    el.style.top = plat.y + 'px';
+                    el.style.width = plat.width + 'px';
+                    screen.appendChild(el);
+                }
+            });
+
+            items.forEach((item, index) => {
+                const el = document.createElement('div');
+                el.className = 'game-obj item';
+                el.id = `item-${index}`;
+                el.style.left = item.x + 'px';
+                el.style.top = item.y + 'px';
+                screen.appendChild(el);
+            });
+        }
+
+        window.addEventListener('keydown', e => { if(gameActive) keys[e.code] = true; });
+        window.addEventListener('keyup', e => { if(gameActive) keys[e.code] = false; });
+
+        // 추가된 코드: START GAME 버튼 클릭 시 모달창 닫기 및 게임 루프 활성화
+        startBtn.addEventListener('click', () => {
+            guideModal.style.display = 'none';
+            gameActive = true;
+        });
+
+        function update() {
+            // 게임이 활성화 상태일 때만 물리 연산 진행
+            if (gameActive) {
+                if (keys['ArrowLeft'] || keys['KeyA']) {
+                    player.vx = -moveSpeed;
+                    playerEl.style.transform = 'scaleX(-1)';
+                } else if (keys['ArrowRight'] || keys['KeyD']) {
+                    player.vx = moveSpeed;
+                    playerEl.style.transform = 'scaleX(1)';
+                } else {
+                    player.vx = 0;
+                }
+
+                if ((keys['Space'] || keys['ArrowUp'] || keys['KeyW']) && player.isGrounded) {
+                    player.vy = jumpForce;
+                    player.isGrounded = false;
+                }
+
+                player.vy += gravity;
+                player.x += player.vx;
+                player.y += player.vy;
+
+                if (player.x < 0) player.x = 0;
+                if (player.x > screenWidth - player.width) player.x = screenWidth - player.width;
+
+                player.isGrounded = false;
+                platforms.forEach(plat => {
+                    if (player.x + player.width > plat.x && 
+                        player.x < plat.x + plat.width &&
+                        player.y + player.height >= plat.y && 
+                        player.y + player.height - player.vy <= plat.y + 4) {
+                        
+                        if (player.vy > 0) {
+                            player.vy = 0;
+                            player.y = plat.y - player.height;
+                            player.isGrounded = true;
