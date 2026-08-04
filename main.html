@@ -11,7 +11,7 @@
         body {
             margin: 0;
             padding: 0;
-            background: linear-gradient(to bottom, #1a1c2e, #393e46);
+            background: linear-gradient(to bottom, #a1c4fd, #c2e9fb); 
             font-family: 'DungGeunMo', monospace;
             height: 100vh;
             display: flex;
@@ -19,23 +19,12 @@
             justify-content: center;
             align-items: center;
             overflow: hidden;
+            position: relative;
             user-select: none;
         }
 
-        /* 8비트 게임기 모니터 스타일 메인 캔버스 컨테이너 */
-        .game-container {
-            position: relative;
-            width: 600px;
-            height: 400px;
-            /* 🌤️ 배경: 첫 화면과 같은 청량한 소다 하늘색 그라디언트 */
-            background: linear-gradient(to bottom, #a1c4fd, #c2e9fb); 
-            border: 6px solid #ff6b81; /* 레트로 핑크 메탈릭 네온 테두리 */
-            box-shadow: 0px 0px 20px rgba(255, 107, 129, 0.4), 12px 12px 0px #1e2124;
-            overflow: hidden;
-        }
-
-        /* ☁️ 배경: 실시간으로 스무스하게 흐르는 레트로 도트 구름 레이어 */
-        .game-container::before {
+        /* ☁️ 무한 루프 레트로 도트 구름 레이어 */
+        body::before {
             content: "";
             position: absolute;
             top: 0;
@@ -55,42 +44,67 @@
             z-index: 1;
         }
 
-        /* CRT 모니터 스타일 격자 텍스처 효과 */
-        .game-container::after {
-            content: "";
-            position: absolute;
-            width: 100%;
-            height: 100%;
-            background-image: 
-                linear-gradient(rgba(255, 255, 255, 0.05) 2px, transparent 0),
-                linear-gradient(90deg, rgba(255, 255, 255, 0.05) 2px, transparent 0);
-            background-size: 16px 16px;
-            pointer-events: none;
-            z-index: 10;
-        }
-
         @keyframes menuClouds {
             0% { transform: translateX(0); }
             100% { transform: translateX(-50%); }
         }
 
-        /* --- 메인 메뉴 스크린 레이아웃 --- */
-        .menu-screen {
-            position: absolute;
-            width: 100%;
-            height: 100%;
-            z-index: 20;
+        /* 🕹️ 아케이드 기기 캐비닛 프레임 본체 하우징 */
+        .arcade-cabinet {
+            background: #2d3436; 
+            border: 6px solid #ff6b81; /* 본체 마감 핑크 라인 테두리 */
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0px 15px 0px #1e2124, 0px 0px 30px rgba(255, 107, 129, 0.5);
             display: flex;
             flex-direction: column;
+            align-items: center;
+            z-index: 2;
+        }
+
+        /* 📺 오락기 CRT 브라운관 스크린 튜브 뷰포트 박스 */
+        .game-container {
+            position: relative;
+            width: 540px;
+            height: 340px;
+            background: linear-gradient(to bottom, #a1c4fd, #c2e9fb); 
+            border: 4px solid #000;
+            border-radius: 6px;
+            overflow: hidden;
+            display: flex;
             justify-content: center;
             align-items: center;
         }
 
+        /* CRT 브라운관 주사선 특수 격자 필터 스크린 */
+        .game-container::after {
+            content: "";
+            position: absolute;
+            width: 100%; height: 100%;
+            background-image: 
+                linear-gradient(rgba(255, 255, 255, 0.04) 2px, transparent 0),
+                linear-gradient(90deg, rgba(255, 255, 255, 0.04) 2px, transparent 0);
+            background-size: 16px 16px;
+            pointer-events: none;
+            z-index: 10;
+        }
+
+        /* --- 화면 내부 스크린 UI --- */
+        .menu-screen {
+            position: absolute;
+            width: 100%; height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            background: rgba(255, 255, 255, 0.2); 
+        }
+
         .menu-title {
             color: #ffffff;
-            font-size: 3rem;
-            margin-bottom: 45px;
-            letter-spacing: 2px;
+            font-size: 2.6rem;
+            margin-top: 0;
+            margin-bottom: 30px;
             text-shadow: 4px 4px 0px #ff6b81, -2px -2px 0px #2d3436;
             animation: pulse 1s infinite alternate;
         }
@@ -98,139 +112,192 @@
         .menu-list {
             display: flex;
             flex-direction: column;
-            gap: 22px;
-            width: 280px;
-            z-index: 25;
+            gap: 16px;
+            width: 250px;
         }
 
-        /* 🎨 버튼 스타일 변경: 배경 무드와 통일감을 주는 딸기 핑크 룩 */
+        /* 버튼 인테리어 : 청량한 소다 블루 테마 슬롯 */
         .menu-item {
-            background-color: #ff7979; 
+            background-color: #74b9ff; 
             color: white;
-            padding: 16px 20px;
-            font-size: 1.5rem;
+            padding: 12px 0;
+            font-size: 1.3rem;
             text-align: center;
-            border: 4px solid #2d3436;
-            box-shadow: 0px 6px 0px #b33939, 4px 10px 0px #2d3436;
+            border: 3px solid #2d3436;
+            box-shadow: 4px 4px 0px #2d3436;
             cursor: pointer;
             font-family: 'DungGeunMo', monospace;
-            position: relative;
             transition: none; 
         }
-
         .menu-item:hover {
-            background-color: #ff5252;
-            color: #ffeaa7; /* 호버 시 노란색 픽셀 포인트 불빛 */
-            box-shadow: 0px 4px 0px #b33939, 4px 8px 0px #2d3436;
-            transform: translateY(2px);
-        }
-        
-        .menu-item:active {
-            box-shadow: 0px 0px 0px #000, 2px 2px 0px #2d3436;
-            transform: translateY(6px) translateX(2px);
-        }
-
-        /* 2번 지진 모델링 버튼은 소다 블루 컬러로 청량감 매칭 */
-        .seismic-btn {
-            background-color: #74b9ff;
-            box-shadow: 0px 6px 0px #0984e3, 4px 10px 0px #2d3436;
-        }
-        .seismic-btn:hover {
             background-color: #0984e3;
-            box-shadow: 0px 4px 0px #054b82, 4px 8px 0px #2d3436;
+            color: #ffeaa7; 
+            transform: translate(2px, 2px);
+            box-shadow: 2px 2px 0px #2d3436;
+        }
+        .menu-item:active {
+            transform: translate(4px, 4px);
+            box-shadow: 0px 0px 0px #2d3436;
         }
 
-        /* 🤖 화면 전체를 대각선으로 통통 자유자재 배회하는 슬라임 캐릭터 */
+        /* 2번 지진 모델링 버튼용 파스텔 핑크 커스텀 스킨 */
+        .seismic-btn { background-color: #ff7979; }
+        .seismic-btn:hover { background-color: #ff5252; }
+
+        /* 🎮 오락기 하단 하드웨어 컨트롤 패널 데크 바 */
+        .control-panel {
+            width: 540px;
+            height: 70px;
+            background: #1e2124;
+            margin-top: 15px;
+            border: 4px solid #000;
+            border-radius: 4px;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 40px;
+            box-sizing: border-box;
+        }
+
+        /* 조이스틱 조작 레버 모듈 */
+        .joystick-wrapper {
+            position: relative;
+            width: 40px; height: 40px;
+        }
+        .joystick-base {
+            position: absolute;
+            width: 30px; height: 12px;
+            background: #57606f;
+            border: 3px solid #000;
+            border-radius: 50%;
+            bottom: 0; left: 5px;
+        }
+        .joystick-stick {
+            position: absolute;
+            width: 6px; height: 26px;
+            background: #ced6e0;
+            border: 2px solid #000;
+            bottom: 6px; left: 15px;
+            transform-origin: bottom center;
+            animation: stickWobble 2s ease-in-out infinite;
+        }
+        .joystick-knob {
+            position: absolute;
+            width: 18px; height: 18px;
+            background: #ff6b81; /* 조이스틱 노브도 본체 테두리와 깔끔한 매칭 링크 */
+            border: 3px solid #000;
+            border-radius: 50%;
+            top: -14px; left: -8px;
+            box-shadow: inset -3px -3px 0px #e85a71;
+        }
+
+        /* 아케이드 게임 파스텔 물리 액션 단추 버튼 스펙트럼 */
+        .action-buttons {
+            display: flex;
+            gap: 14px;
+        }
+        .arcade-button {
+            width: 24px; height: 24px;
+            border-radius: 50%;
+            border: 3px solid #000;
+            cursor: pointer;
+            position: relative;
+        }
+        .arcade-button:active {
+            transform: translateY(3px);
+        }
+
+        /* ✨ 색상 수정: 칙칙한 원색에서 파스텔 솜사탕 톤으로 드레스업 */
+        .arc-pink { 
+            background: #ff7979; /* 딸기 밀크 핑크 버튼 */
+            box-shadow: 0px 4px 0px #b33939; 
+        }
+        .arc-pink:active { box-shadow: 0px 1px 0px #b33939; }
+
+        .arc-blue { 
+            background: #74b9ff; /* 네온 소다 블루 버튼 */
+            box-shadow: 0px 4px 0px #0984e3; 
+        }
+        .arc-blue:active { box-shadow: 0px 1px 0px #0984e3; }
+
+        .arc-yellow { 
+            background: #ffeaa7; /* 바나나 요거트 옐로우 버튼 */
+            box-shadow: 0px 4px 0px #fdcb6e; 
+        }
+        .arc-yellow:active { box-shadow: 0px 1px 0px #fdcb6e; }
+
+        /* 🤖 화면 전체 공간을 자유롭게 튕겨 노는 슬라임 동료 */
         .npc-pet {
             position: absolute;
-            width: 32px;
-            height: 26px;
+            width: 32px; height: 26px;
             background-color: #a8e6cf;
-            border: 3px solid #000;
+            border: 3px solid #2d3436;
             border-radius: 4px;
             box-shadow: inset -5px -5px 0px #81c784;
-            z-index: 22;
+            z-index: 5; 
             animation: slimeSquish 0.3s infinite alternate;
         }
         .npc-pet::before {
             content: "";
             position: absolute;
-            top: 7px;
-            right: 5px;
-            width: 4px;
-            height: 4px;
+            top: 7px; right: 5px;
+            width: 4px; height: 4px;
             background-color: #000;
             box-shadow: -10px 0px #000;
         }
 
+        .panel-hint {
+            position: absolute;
+            bottom: -22px;
+            left: 0;
+            width: 100%;
+            text-align: center;
+            color: #888;
+            font-size: 0.8rem;
+        }
+
+        /* 아케이드 모션 키프레임 목록 */
+        @keyframes stickWobble {
+            0%, 100% { transform: rotate(0deg); }
+            30% { transform: rotate(8deg); }
+            70% { transform: rotate(-8deg); }
+        }
         @keyframes slimeSquish { 0% { transform: scaleY(1); } 100% { transform: scaleY(0.82) translateY(2px); } }
-        @keyframes pulse { 0% { transform: scale(1); } 100% { transform: scale(1.04); } }
+        @keyframes pulse { 0% { transform: scale(1); } 100% { transform: scale(1.03); } }
     </style>
 </head>
 <body>
 
-    <div class="game-container">
+    <!-- 🕹️ 레트로 게임기 하우징 프레임 -->
+    <div class="arcade-cabinet">
         
-        <!-- [메인 메뉴 레이어] -->
-        <div class="menu-screen" id="menuScreen">
-            <div class="menu-title">SELECT MENU</div>
-            <div class="menu-list">
-                <div class="menu-item" onclick="window.location.href='game.html'">1. 도트 게임하기</div>
-                <div class="menu-item seismic-btn" onclick="window.location.href='earth.html'">2. 지진 모델링</div>
-            </div>
+        <!-- 📺 오락기 모니터 화면 구역 -->
+        <div class="game-container" id="screenView">
             
-            <!-- 사방을 자유자재로 돌아다니는 슬라임 캐릭터 -->
+            <div class="menu-screen">
+                <div class="menu-title">SELECT MENU</div>
+                
+                <div class="menu-list">
+                    <div class="menu-item" onclick="window.location.href='game.html'">1. 도트 게임하기</div>
+                    <div class="menu-item seismic-btn" onclick="window.location.href='earth.html'">2. 지진 모델링</div>
+                </div>
+            </div>
+
+            <!-- 스크린 내부를 대각선 자유자재로 배회하는 픽셀 슬라임 -->
             <div class="npc-pet" id="menuPet"></div>
+            
         </div>
 
-    </div>
-
-    <script>
-        const menuPet = document.getElementById('menuPet');
-
-        // ✨ 2D 자유 튕김 AI 엔진 변수 설정
-        let petX = 120;
-        let petY = 200;
-        
-        // 가로(X) 속도와 세로(Y) 속도를 다르게 주어 튕겨 다니도록 설정 (0.7 수준의 느긋한 속도)
-        let vx = 0.7; 
-        let vy = 0.4; 
-        
-        const petWidth = 32;
-        const petHeight = 26;
-        const containerWidth = 600;
-        const containerHeight = 400;
-
-        function animationLoop() {
-            // 위치 업데이트
-            petX += vx;
-            petY += vy;
+        <!-- 🕹️ 오락기 본체 하단 스틱/버튼 컨트롤 보드 구역 -->
+        <div class="control-panel">
+            <!-- 조이스틱 레버 연출 -->
+            <div class="joystick-wrapper">
+                <div class="joystick-base"></div>
+                <div class="joystick-stick">
+                    <div class="joystick-knob"></div>
+                </div>
+            </div>
             
-            // 1. 가로 벽 충돌 검사 및 좌우 시선 전환 연출
-            if (petX + petWidth > containerWidth - 10) {
-                vx = -vx;
-                menuPet.style.transform = 'scaleX(-1)'; // 벽에 부딪히면 왼쪽 바라보기
-            } else if (petX < 10) {
-                vx = -vx;
-                menuPet.style.transform = 'scaleX(1)';  // 벽에 부딪히면 오른쪽 바라보기
-            }
-
-            // 2. 세로 벽(천장과 바닥) 충돌 검사
-            if (petY + petHeight > containerHeight - 15) {
-                vy = -vy; // 바닥에 닿으면 튕겨 올라감
-            } else if (petY < 15) {
-                vy = -vy; // 천장에 닿으면 튕겨 내려옴
-            }
-            
-            // 실시간 스타일 좌표 연동
-            menuPet.style.left = petX + 'px';
-            menuPet.style.top = petY + 'px';
-            
-            requestAnimationFrame(animationLoop);
-        }
-
-        // AI 가동 루프 시작
-        animationLoop();
-    </script>
-</body>
-</html>
+            <!-- 🔗 실제 링크 제어 스위치 기능을 장착한 컬러 물리 버튼 랙 -->
+            <div class="action-buttons">
