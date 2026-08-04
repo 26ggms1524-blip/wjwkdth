@@ -5,9 +5,7 @@
 
 <meta charset="UTF-8">
 
-<title>
-Earthquake Live Monitor
-</title>
+<title>Earthquake Live Monitor</title>
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
@@ -18,14 +16,13 @@ href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
 
 <style>
 
-
 html,body{
 
 margin:0;
 padding:0;
 height:100%;
 overflow:hidden;
-font-family:Arial,sans-serif;
+font-family:"Arial",sans-serif;
 
 }
 
@@ -64,11 +61,11 @@ background:#111827;
 
 color:white;
 
-z-index:999;
-
 padding:15px;
 
 overflow-y:auto;
+
+z-index:9999;
 
 }
 
@@ -76,33 +73,33 @@ overflow-y:auto;
 
 #panel h1{
 
+margin:0;
+
 font-size:22px;
 
-margin:0 0 10px;
-
 }
-
 
 
 .info{
 
-color:#cbd5e1;
+margin-top:10px;
 
 font-size:13px;
 
-line-height:1.5;
+color:#cbd5e1;
+
+line-height:1.6;
 
 }
 
 
-
 button{
+
+margin-top:15px;
 
 width:100%;
 
 padding:10px;
-
-margin-top:10px;
 
 border:none;
 
@@ -115,7 +112,6 @@ color:white;
 cursor:pointer;
 
 }
-
 
 
 button:hover{
@@ -152,7 +148,7 @@ background:#374151;
 
 .mag{
 
-font-size:22px;
+font-size:21px;
 
 font-weight:bold;
 
@@ -182,17 +178,8 @@ margin-top:5px;
 
 
 
-.legend{
-
-margin-top:15px;
-
-font-size:12px;
-
-}
-
-
-
 </style>
+
 
 </head>
 
@@ -200,34 +187,33 @@ font-size:12px;
 <body>
 
 
+
 <div id="panel">
 
 
 <h1>
-🌍 Earth Monitor
+🌎 Earth Monitor
 </h1>
 
 
 <div class="info">
 
-흰색 : 바다<br>
+🌊 바다 : 흰색<br>
 
-하늘색 : 대륙<br>
+🌍 대륙 : 하늘색<br>
 
-빨간 점선 : 판 경계<br>
+🔴 판 경계 : 빨간 점선<br>
 
-최근 24시간 지진
+📡 USGS 실시간 지진
 
 </div>
 
 
-
 <button onclick="loadEarthquakes()">
 
-지진 데이터 새로고침
+새로고침
 
 </button>
-
 
 
 <hr>
@@ -235,12 +221,13 @@ font-size:12px;
 
 <div id="list">
 
-데이터 불러오는 중...
+지진 데이터 준비중...
 
 </div>
 
 
 </div>
+
 
 
 
@@ -248,18 +235,21 @@ font-size:12px;
 
 
 
+
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
 
 
 <script>
 
 
-// ==========================
+// =======================
 // 지도 생성
-// ==========================
+// =======================
 
 
 const map=L.map("map",{
+
 
 minZoom:2,
 
@@ -267,16 +257,24 @@ maxZoom:6,
 
 zoomControl:true
 
+
 });
 
 
-map.setView([20,0],2);
+
+map.setView(
+
+[20,0],
+
+2
+
+);
 
 
 
-// ==========================
-// 흰색 바다
-// ==========================
+// =======================
+// 흰색 바다 배경
+// =======================
 
 
 L.rectangle(
@@ -297,19 +295,21 @@ stroke:false
 
 
 
-// ==========================
+
+
+// =======================
 // 대륙 표시
 // 하늘색
-// ==========================
+// =======================
 
 
-const countryURL=
+const landURL=
 
 "https://raw.githubusercontent.com/datasets/geo-countries/master/data/countries.geojson";
 
 
 
-fetch(countryURL)
+fetch(landURL)
 
 .then(res=>res.json())
 
@@ -318,16 +318,16 @@ fetch(countryURL)
 
 L.geoJSON(data,{
 
+
 style:{
 
 
-color:"#333",
+color:"#333333",
 
 weight:1,
 
 
 fillColor:"#87CEEB",
-
 
 fillOpacity:1
 
@@ -340,11 +340,11 @@ fillOpacity:1
 
 });
 
-
-// ==========================
+    
+// =======================
 // 판 경계 표시
-// 빨간색 점선
-// ==========================
+// 빨간 점선
+// =======================
 
 
 const plateURL =
@@ -369,7 +369,7 @@ color:"red",
 
 weight:2,
 
-dashArray:"10,10",
+dashArray:"8,8",
 
 opacity:0.9
 
@@ -385,39 +385,188 @@ opacity:0.9
 
 
 
-// ==========================
-// 지진 데이터
-// ==========================
+
+// =======================
+// 지역명 한국어 변환
+// =======================
 
 
-let quakeLayers=[];
+function koreanPlace(place){
 
+
+let p=place;
+
+
+
+const words={
+
+
+"Japan":"일본",
+
+"South Korea":"대한민국",
+
+"North Korea":"북한",
+
+"China":"중국",
+
+"Taiwan":"대만",
+
+"Philippines":"필리핀",
+
+"Indonesia":"인도네시아",
+
+"Russia":"러시아",
+
+"Alaska":"알래스카",
+
+"California":"캘리포니아",
+
+"Hawaii":"하와이",
+
+"Chile":"칠레",
+
+"Mexico":"멕시코",
+
+"Turkey":"튀르키예",
+
+"Iran":"이란",
+
+"India":"인도",
+
+"Pakistan":"파키스탄",
+
+"Afghanistan":"아프가니스탄",
+
+"Greece":"그리스",
+
+"Italy":"이탈리아",
+
+"New Zealand":"뉴질랜드",
+
+"Australia":"호주",
+
+"Canada":"캐나다",
+
+"United States":"미국"
+
+
+};
+
+
+
+// 국가명 변경
+
+
+Object.keys(words).forEach(key=>{
+
+
+p=p.replace(
+
+key,
+
+words[key]
+
+);
+
+
+});
+
+
+
+
+// 방향 번역
+
+
+p=p.replace(
+" km NW of ",
+" km 북서쪽 "
+);
+
+
+p=p.replace(
+" km NE of ",
+" km 북동쪽 "
+);
+
+
+p=p.replace(
+" km SW of ",
+" km 남서쪽 "
+);
+
+
+p=p.replace(
+" km SE of ",
+" km 남동쪽 "
+);
+
+
+p=p.replace(
+" km N of ",
+" km 북쪽 "
+);
+
+
+p=p.replace(
+" km S of ",
+" km 남쪽 "
+);
+
+
+p=p.replace(
+" km E of ",
+" km 동쪽 "
+);
+
+
+p=p.replace(
+" km W of ",
+" km 서쪽 "
+);
+
+
+
+return p;
+
+
+}
+
+    
+// =======================
+// 실시간 지진 데이터
+// =======================
+
+
+let quakeMarkers=[];
 
 
 
 async function loadEarthquakes(){
 
 
+const list=document.getElementById("list");
 
-document.getElementById("list").innerHTML=
 
-"불러오는 중...";
+list.innerHTML="데이터 불러오는 중...";
 
 
 
 // 기존 지진 제거
 
-quakeLayers.forEach(layer=>{
+quakeMarkers.forEach(marker=>{
 
-map.removeLayer(layer);
+
+map.removeLayer(marker);
+
 
 });
 
 
-quakeLayers=[];
+quakeMarkers=[];
 
 
 
+// USGS 최근 24시간 데이터
 
 const url=
 
@@ -425,35 +574,31 @@ const url=
 
 
 
-const response=
-
-await fetch(url);
+const response=await fetch(url);
 
 
-
-const data=
-
-await response.json();
+const data=await response.json();
 
 
 
+let earthquakes=data.features;
 
-const earthquakes=data.features;
 
 
-// ==========================
-// 발생 시간 최신순 정렬
-// ==========================
+// =======================
+// 시간 최신순 정렬
+// =======================
+
 
 earthquakes.sort((a,b)=>{
 
+
 return b.properties.time - a.properties.time;
+
 
 });
 
 
-
-const list=document.getElementById("list");
 
 
 list.innerHTML="";
@@ -461,23 +606,26 @@ list.innerHTML="";
 
 
 
+
 earthquakes.forEach(eq=>{
 
 
-const mag=
-
-eq.properties.mag;
+const mag=eq.properties.mag;
 
 
-const place=
+const place=koreanPlace(
 
-koreanPlace(eq.properties.place);
+eq.properties.place
+
+);
 
 
 
-const time=
+const time=new Date(
 
-new Date(eq.properties.time);
+eq.properties.time
+
+);
 
 
 
@@ -498,31 +646,44 @@ eq.geometry.coordinates[2];
 
 
 
-// 색상 결정
+
+// =======================
+// 규모별 색상
+// =======================
 
 
-let color="green";
-
-
-if(mag>=4)
-
-color="yellow";
-
-
-if(mag>=5)
-
-color="orange";
-
-
-if(mag>=6)
-
-color="red";
+let color="#22c55e";
 
 
 
+if(mag>=4){
+
+color="#facc15";
+
+}
 
 
-// 지도 점 표시
+
+if(mag>=5){
+
+color="#fb923c";
+
+}
+
+
+
+if(mag>=6){
+
+color="#ef4444";
+
+}
+
+
+
+
+// =======================
+// 지도 지진 표시
+// =======================
 
 
 const marker=L.circleMarker(
@@ -549,6 +710,7 @@ weight:2
 
 }
 
+
 ).addTo(map);
 
 
@@ -565,7 +727,7 @@ marker.bindPopup(`
 </h3>
 
 
-위치 :
+<b>지역</b><br>
 
 ${place}
 
@@ -573,7 +735,7 @@ ${place}
 <br><br>
 
 
-깊이 :
+<b>깊이</b><br>
 
 ${depth.toFixed(1)} km
 
@@ -581,9 +743,9 @@ ${depth.toFixed(1)} km
 <br><br>
 
 
-시간 :
+<b>발생시간</b><br>
 
-${time.toUTCString()}
+${time.toLocaleString()}
 
 
 <br><br>
@@ -603,13 +765,16 @@ USGS 상세 자료 보기
 
 
 
-quakeLayers.push(marker);
+quakeMarkers.push(marker);
 
 
 
 
 
-// 왼쪽 목록 생성
+
+// =======================
+// 왼쪽 목록
+// =======================
 
 
 const item=document.createElement("div");
@@ -619,9 +784,7 @@ item.className="event";
 
 
 
-item.innerHTML=
-
-`
+item.innerHTML=`
 
 <div class="mag">
 
@@ -643,8 +806,8 @@ ${time.toLocaleString()}
 
 </div>
 
-
 `;
+
 
 
 
@@ -671,7 +834,10 @@ duration:1
 marker.openPopup();
 
 
+
 };
+
+
 
 
 
@@ -693,8 +859,7 @@ loadEarthquakes();
 
 
 
-
-// 60초마다 갱신
+// 1분마다 자동 갱신
 
 setInterval(
 
@@ -705,9 +870,9 @@ loadEarthquakes,
 );
 
     
-// ==========================
-// 지도 확대 제한 보완
-// ==========================
+// =======================
+// 확대 제한
+// =======================
 
 
 map.on("zoomend",function(){
@@ -727,12 +892,16 @@ map.setZoom(6);
 
 
 
-// ==========================
-// 모바일 화면 대응
-// ==========================
+// =======================
+// 화면 크기 변경 대응
+// =======================
 
 
-function resizeMap(){
+window.addEventListener(
+
+"resize",
+
+function(){
 
 
 map.invalidateSize();
@@ -740,21 +909,13 @@ map.invalidateSize();
 
 }
 
-
-
-window.addEventListener(
-
-"resize",
-
-resizeMap
-
 );
 
 
 
-// ==========================
-// 시작 위치
-// ==========================
+// =======================
+// 초기 위치
+// =======================
 
 
 map.setView(
@@ -764,7 +925,6 @@ map.setView(
 2
 
 );
-
 
 
 </script>
