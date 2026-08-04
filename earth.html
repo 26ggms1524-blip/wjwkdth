@@ -441,18 +441,15 @@ await response.json();
 const earthquakes=data.features;
 
 
-
-// 규모 큰 순서
+// ==========================
+// 발생 시간 최신순 정렬
+// ==========================
 
 earthquakes.sort((a,b)=>{
 
-
-return b.properties.mag-a.properties.mag;
-
+return b.properties.time - a.properties.time;
 
 });
-
-
 
 
 
