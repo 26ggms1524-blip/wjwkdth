@@ -93,6 +93,7 @@
         .game-obj {
             position: absolute;
             box-sizing: border-box;
+            display: none; /* 💡 수정: 게임 시작 전에는 숨겨둠 */
         }
 
         /* 플레이어 (도트 캐릭터) */
@@ -147,7 +148,6 @@
             padding: 30px;
             text-align: center;
             box-sizing: border-box;
-            /* 💡 글꼴 변경: 안내창 내부 모든 텍스트에 도트 글꼴 적용 */
             font-family: 'DungGeunMo', monospace;
         }
 
@@ -170,7 +170,6 @@
             border: 2px dashed #b2bec3; 
         }
         
-        /* 🎨 버튼 스타일 수정: 파스텔 감성의 딸기 핑크색 버튼으로 변경 */
         .start-btn { 
             background-color: #ff7979; 
             color: white; 
@@ -252,6 +251,7 @@
                     const el = document.createElement('div');
                     el.className = 'game-obj platform';
                     el.style.left = plat.x + 'px'; el.style.top = plat.y + 'px'; el.style.width = plat.width + 'px';
+                    el.style.display = 'block'; // 화면에 노출
                     screen.appendChild(el);
                 }
             });
@@ -259,17 +259,20 @@
                 const el = document.createElement('div');
                 el.className = 'game-obj item'; el.id = `item-${index}`;
                 el.style.left = item.x + 'px'; el.style.top = item.y + 'px';
+                el.style.display = 'block'; // 화면에 노출
                 screen.appendChild(el);
             });
         }
 
-        // 💡 버그 해결: 이벤트 키 캡처가 게임 상태와 무관하게 실시간 동기화 큐에 등록되도록 보정 [10]
         window.addEventListener('keydown', e => { keys[e.code] = true; });
         window.addEventListener('keyup', e => { keys[e.code] = false; });
 
+        // 💡 수정: "게임 시작" 버튼을 누를 때 맵 타일과 캐릭터를 실시간으로 생성하도록 변경하여 프리징 현상을 완전히 해결했습니다.
         function startGame() {
             guideModal.style.display = 'none'; 
-            gameActive = true;                
+            playerEl.style.display = 'block'; // 플레이어 캐릭터 소환
+            initMap();                       // 구름 발판 및 아이템 배치 가동
+            gameActive = true;               // 중력 엔진 활성화
         }
 
         function update() {
@@ -277,7 +280,4 @@
                 if (keys['ArrowLeft'] || keys['KeyA']) {
                     player.vx = -moveSpeed; playerEl.style.transform = 'scaleX(-1)';
                 } else if (keys['ArrowRight'] || keys['KeyD']) {
-                    player.vx = moveSpeed; playerEl.style.transform = 'scaleX(1)';
-                } else { player.vx = 0; }
-
-                if ((keys['Space'] || keys['ArrowUp'] || keys['KeyW']) && player.isGrounded) {
+            
