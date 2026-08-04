@@ -102,6 +102,46 @@
             transform: translate(4px, 4px);
             box-shadow: 0px 0px 0px #2d3436;
         }
+        /* 추가 코드: 마우스 클릭 유지 시 완전히 아래로 내려앉는 아케이드 입력 모션 */
+        .btn:active {
+            transform: translate(6px, 6px);
+            box-shadow: 0px 0px 0px #2d3436;
+        }
+
+        /* --- [추가된 디자인] 레드로 브라운관 지지직 노이즈 스크린 필터 --- */
+        .glitch-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: repeating-linear-gradient(0deg, rgba(0,0,0,0.18) 0px, rgba(0,0,0,0.18) 2px, transparent 2px, transparent 4px);
+            background-color: rgba(255, 255, 255, 0.25);
+            z-index: 9999;
+            display: none;
+            pointer-events: none;
+        }
+        
+        /* 스크린 트리거 가동 인터페이스 */
+        .glitch-active {
+            display: block !important;
+            animation: tvStatic 0.12s infinite;
+        }
+        .body-glitch {
+            animation: screenShake 0.08s infinite;
+            filter: contrast(160%) brightness(130%) hue-rotate(60deg);
+        }
+
+        @keyframes tvStatic {
+            0% { background-position: 0 0; background-color: rgba(255,255,255,0.4); }
+            50% { background-position: 4px 8px; background-color: rgba(0,0,0,0.25); }
+            100% { background-position: -4px -8px; background-color: rgba(255,255,255,0.3); }
+        }
+        @keyframes screenShake {
+            0% { transform: translate(3px, 2px) skew(1.5deg); }
+            50% { transform: translate(-2px, -3px) skew(-1.5deg); }
+            100% { transform: translate(1px, 3px) skew(0deg); }
+        }
     </style>
 </head>
 <body>
@@ -110,9 +150,31 @@
         <h1>☁️ Welcome! 🥤</h1>
         <!-- 2. Emotional phrase with italic styling preserved -->
         <p>A sweet sip of the sky, a taste of nostalgia.<br> cms.</p>
-        <!-- 3. Retro arcade style "ENTER" button -->
-        <a href="#" class="btn">ENTER</a>
+        <!-- 3. Retro arcade style "ENTER" button (스크립트 인터셉트를 위해 id="enterBtn" 지정) -->
+        <a href="#" id="enterBtn" class="btn">ENTER</a>
     </div>
+
+    <!-- [추가된 레이아웃] 지지직 오버레이 스크린 도프 -->
+    <div id="glitchOverlay" class="glitch-overlay"></div>
+
+    <!-- [추가된 스크립트] 0.5초 타이머 연동 및 메인 화면 점프 엔진 -->
+    <script>
+        document.getElementById('enterBtn').addEventListener('click', function(e) {
+            e.preventDefault(); // 하이퍼링크 기본 즉시 이동 성질 제한
+            
+            const overlay = document.getElementById('glitchOverlay');
+            const body = document.body;
+
+            // 지지직 노이즈 필터 및 쉐이크 애니메이션 작동 클래스 주입
+            overlay.classList.add('glitch-active');
+            body.classList.add('body-glitch');
+
+            // 0.5초(500ms) 동안 화면 요동 연출 후 세 가지 목록을 설계했던 main.html로 부드럽게 점프
+            setTimeout(() => {
+                window.location.href = 'main.html';
+            }, 500);
+        });
+    </script>
 </body>
 </html>
 
