@@ -2,170 +2,515 @@
 <html lang="ko">
 <head>
 <meta charset="UTF-8">
-<title>Live Earthquakes</title>
+<title>Real Time Earthquake Monitor</title>
 
-<link
-rel="stylesheet"
-href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<link rel="stylesheet" 
+href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
 
 <style>
 
-html,body{
-margin:0;
-height:100%;
-background:#314b67;
-font-family:Arial;
+*{
+    box-sizing:border-box;
 }
+
+body{
+    margin:0;
+    overflow:hidden;
+    font-family:Arial, sans-serif;
+}
+
 
 #map{
-width:100%;
-height:100vh;
+    position:absolute;
+    left:330px;
+    right:0;
+    top:0;
+    bottom:0;
 }
 
-.mag{
-color:white;
-font-weight:bold;
-text-shadow:
-0 0 4px black,
-0 0 4px black;
-font-size:12px;
-text-align:center;
+
+#panel{
+
+    position:absolute;
+    left:0;
+    top:0;
+    width:330px;
+    height:100vh;
+
+    background:#111827;
+    color:white;
+
+    overflow-y:auto;
+
+    padding:15px;
+
+    z-index:1000;
+
 }
+
+
+#panel h2{
+
+    margin:0 0 10px 0;
+
+    font-size:20px;
+
+}
+
+
+.info{
+
+    font-size:13px;
+
+    color:#9ca3af;
+
+    margin-bottom:15px;
+
+}
+
+
+.event{
+
+    background:#1f2937;
+
+    border-radius:8px;
+
+    padding:12px;
+
+    margin-bottom:10px;
+
+    cursor:pointer;
+
+    transition:.2s;
+
+}
+
+
+.event:hover{
+
+    background:#374151;
+
+}
+
+
+.mag{
+
+    font-size:20px;
+
+    font-weight:bold;
+
+}
+
+
+.time{
+
+    color:#9ca3af;
+
+    font-size:12px;
+
+}
+
+
+.place{
+
+    margin-top:5px;
+
+    font-size:13px;
+
+}
+
+
+button{
+
+    width:100%;
+
+    background:#2563eb;
+
+    border:0;
+
+    color:white;
+
+    padding:8px;
+
+    border-radius:5px;
+
+    cursor:pointer;
+
+}
+
+
+.leaflet-popup-content{
+
+    font-size:14px;
+
+}
+
+
 
 </style>
 
 </head>
+
+
 <body>
+
+
+<div id="panel">
+
+<h2>🌍 실시간 지진</h2>
+
+<div class="info">
+최근 24시간<br>
+USGS 실시간 데이터
+</div>
+
+
+<button onclick="loadEarthquakes()">
+새로고침
+</button>
+
+
+<hr>
+
+
+<div id="list">
+
+불러오는 중...
+
+</div>
+
+
+</div>
+
+
 
 <div id="map"></div>
 
+
+
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+
 
 <script>
 
-const map=L.map("map",{
-zoomControl:true,
-worldCopyJump:true
+
+// 지도 설정
+
+const map = L.map("map",{
+
+    minZoom:2,
+
+    maxZoom:6,
+
+    zoomControl:true
+
 }).setView([20,0],2);
 
-L.tileLayer(
-"https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
-{
-maxZoom:8
-}).addTo(map);
 
-let layer;
+
+L.tileLayer(
+
+"https://tile.openstreetmap.org/{z}/{x}/{y}.png",
+
+{
+
+    maxZoom:6,
+
+    attribution:"© OpenStreetMap"
+
+}
+
+).addTo(map);
+
+
+
+let markers=[];
+
+
+
+
+function clearMarkers(){
+
+    markers.forEach(m=>map.removeLayer(m));
+
+    markers=[];
+
+}
+
+
+
 
 async function loadEarthquakes(){
 
-if(layer){
-layer.remove();
+
+document.getElementById("list").innerHTML=
+"불러오는 중...";
+
+
+clearMarkers();
+
+
+
+const url = 
+"https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_day.geojson";
+
+
+
+const data = await fetch(url).then(r=>r.json());
+
+
+
+let list=document.getElementById("list");
+
+list.innerHTML="";
+
+
+
+let earthquakes=data.features;
+
+
+
+// 규모 큰 순서
+
+earthquakes.sort(
+(a,b)=>
+b.properties.mag-a.properties.mag
+);
+
+
+
+earthquakes.forEach(eq=>{
+
+
+const mag=eq.properties.mag;
+
+const place=eq.properties.place;
+
+const time=new Date(
+eq.properties.time
+);
+
+
+const lat=eq.geometry.coordinates[1];
+
+const lon=eq.geometry.coordinates[0];
+
+const depth=
+eq.geometry.coordinates[2];
+
+
+
+let color="#22c55e";
+
+
+if(mag>=4) color="#facc15";
+
+if(mag>=5) color="#fb923c";
+
+if(mag>=6) color="#ef4444";
+
+
+
+let marker=L.circleMarker(
+
+[lat,lon],
+
+{
+
+radius:Math.max(mag*3,5),
+
+color:color,
+
+fillColor:color,
+
+fillOpacity:.7
+
 }
 
-const url="https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/2.5_day.geojson";
+).addTo(map);
 
-const data=await fetch(url).then(r=>r.json());
 
-layer=L.layerGroup().addTo(map);
 
-data.features.forEach(q=>{
+marker.bindPopup(`
 
-const mag=q.properties.mag;
-const place=q.properties.place;
+<b>규모 M${mag}</b><br>
 
-const lat=q.geometry.coordinates[1];
-const lon=q.geometry.coordinates[0];
+${place}<br><br>
 
-const radius=mag*4+4;
+깊이 : ${depth.toFixed(1)} km<br>
 
-L.circleMarker([lat,lon],{
+시간 : ${time.toUTCString()}<br><br>
 
-radius:radius,
+<a href="${eq.properties.url}" target="_blank">
 
-color:"#ff6600",
+USGS 상세자료 보기
 
-fillColor:"#ffb000",
+</a>
 
-fillOpacity:0.8,
+`);
 
-weight:1
 
-}).bindPopup(
 
-"<b>"+place+"</b><br>" +
 
-"규모 : "+mag
+markers.push(marker);
 
-).addTo(layer);
 
-L.marker([lat,lon],{
 
-icon:L.divIcon({
 
-className:"",
 
-html:'<div class="mag">'+mag.toFixed(1)+'</div>',
+let item=document.createElement("div");
 
-iconSize:[30,14]
+item.className="event";
 
-})
 
-}).addTo(layer);
+
+item.innerHTML=
+
+`
+
+<div class="mag">
+
+M ${mag}
+
+</div>
+
+
+<div class="place">
+
+${place}
+
+</div>
+
+
+<div class="time">
+
+${time.toLocaleString()}
+
+</div>
+
+
+`;
+
+
+
+item.onclick=function(){
+
+map.setView(
+
+[lat,lon],
+
+5
+
+);
+
+marker.openPopup();
+
+};
+
+
+
+list.appendChild(item);
+
+
 
 });
 
+
+
 }
+
+
+
 
 loadEarthquakes();
 
-setInterval(loadEarthquakes,60000);
+
+
+setInterval(
+
+loadEarthquakes,
+
+60000
+
+);
+
+
 
 </script>
 
-</body>
-</html>
+    <!-- 2/2 -->
 
-const map = L.map("map",{
-    center:[20,0],
-    zoom:2,
-    minZoom:2,
-    maxZoom:6   // 최대 확대
+<style>
+
+@media(max-width:700px){
+
+#panel{
+
+width:100%;
+height:40%;
+bottom:0;
+top:auto;
+
+}
+
+#map{
+
+left:0;
+top:0;
+height:60%;
+
+}
+
+}
+
+</style>
+
+
+<script>
+
+
+// 지도 이동 시 줌 제한 유지
+
+map.on("zoomend",function(){
+
+if(map.getZoom()>6){
+
+map.setZoom(6);
+
+}
+
 });
 
-📍 위치
-12 km SE of Middletown, CA
 
-🌎 규모
-M 4.8
+// 지진 점 강조 기능
 
-📏 깊이
-12.4 km
+function focusEarthquake(lat,lon){
 
-🕒 발생시간
-2026-08-04 13:22 UTC
+map.flyTo(
 
-📌 좌표
-38.77, -122.67
+[lat,lon],
 
-🔗 USGS 상세 페이지
-[Open Event]
+6,
 
-──────────────
-규모 5.3
-🟠
+{
 
-위치
-일본 홋카이도
+duration:1
 
-깊이
-18 km
+}
 
-발생시간
-...
+);
 
-[USGS 보기]
+}
 
-[Google 지도]
 
-[좌표 복사]
-──────────────
+
+
+</script>
+
+
+</body>
+
+</html>
