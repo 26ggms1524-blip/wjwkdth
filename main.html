@@ -27,7 +27,7 @@
             position: relative;
             width: 600px;
             height: 400px;
-            background-color: #5c94fc; /* 고전 게임 특유의 하늘색 */
+            background-color: #5c94fc; 
             border: 6px solid #2d3436;
             box-shadow: 12px 12px 0px #23272a;
             overflow: hidden;
@@ -51,7 +51,7 @@
             box-sizing: border-box;
         }
 
-        /* --- 1. 메인 메뉴 선택 화면 (요청에 따라 2개 목록으로 압축) --- */
+        /* --- 1. 메인 메뉴 선택 화면 --- */
         .menu-screen {
             position: absolute;
             width: 100%;
@@ -77,6 +77,7 @@
             flex-direction: column;
             gap: 20px;
             width: 250px;
+            z-index: 25; /* 캐릭터보다 위에 오도록 배치 */
         }
 
         .menu-item {
@@ -101,6 +102,38 @@
         .menu-item:active {
             transform: translate(4px, 4px);
             box-shadow: 0px 0px 0px #000;
+        }
+
+        /* ✨ 메뉴 화면에서 돌아다니는 귀여운 도트 슬라임 캐릭터 */
+        .npc-pet {
+            position: absolute;
+            bottom: 30px;
+            left: 100px;
+            width: 28px;
+            height: 24px;
+            background-color: #a8e6cf;
+            border: 3px solid #000;
+            border-radius: 4px;
+            box-shadow: inset -4px -4px 0px #81c784;
+            z-index: 22;
+            /* 말랑말랑 움직이는 픽셀 애니메이션 */
+            animation: slimeSquish 0.4s infinite alternate;
+        }
+        /* 슬라임 눈 도트 구성 */
+        .npc-pet::before {
+            content: "";
+            position: absolute;
+            top: 6px;
+            right: 4px;
+            width: 4px;
+            height: 4px;
+            background-color: #000;
+            box-shadow: -8px 0px #000;
+        }
+
+        @keyframes slimeSquish {
+            0% { transform: scaleY(1); }
+            100% { transform: scaleY(0.85) translateY(2px); }
         }
 
         /* --- 2. 지진 모델링 화면 UI --- */
@@ -187,7 +220,7 @@
             animation: itemFloat 0.6s ease-in-out infinite alternate;
         }
 
-        /* --- 설명 팝업 알림창 --- */
+        /* --- 플레이 설명 팝업 알림창 --- */
         .modal-overlay {
             position: absolute;
             top: 0;
@@ -233,9 +266,11 @@
         <div class="menu-screen" id="menuScreen">
             <div class="menu-title">SELECT MENU</div>
             <div class="menu-list">
-                <div class="menu-item" onclick="openGameWithGuide()">1. 게임시작</div>
-                <div class="menu-item" onclick="switchScreen('earthquake')">2. 지진모델링</div>
+                <div class="menu-item" onclick="openGameWithGuide()">1. 도트 게임하기</div>
+                <div class="menu-item" onclick="switchScreen('earthquake')">2. 지진 모델링</div>
             </div>
+            <!-- 추가: 혼자 돌아다니는 귀여운 엔티티 펫 -->
+            <div class="npc-pet" id="menuPet"></div>
         </div>
 
         <!-- [지진 모델링 시뮬레이션 레이어] -->
@@ -275,23 +310,3 @@
     <div class="controls-guide" id="bottomGuide">[◀] [▶] MOVE &nbsp;&nbsp;|&nbsp;&nbsp; [SPACE] or [▲] JUMP</div>
 
     <script>
-        const screen = document.getElementById('gameScreen');
-        const playerEl = document.getElementById('player');
-        const scoreEl = document.getElementById('scoreVal');
-        const gameHud = document.getElementById('gameHud');
-        const bottomGuide = document.getElementById('bottomGuide');
-        
-        const menuScreen = document.getElementById('menuScreen');
-        const earthquakeScreen = document.getElementById('earthquakeScreen');
-        const guideModal = document.getElementById('guideModal');
-
-        // 지진파용 캔버스 인스턴스 인터페이스
-        const canvas = document.getElementById('seismicCanvas');
-        const ctx = canvas.getContext('2d');
-        let seismicAnimationId;
-        let seismicX = 0;
-
-        // 게임 물리용 수치 변수 설정
-        const screenWidth = 600; const screenHeight = 400;
-        let player = { x: 280, y: 300, vx: 0, vy: 0, width: 24, height: 32, isGrounded: false };
-        let score = 0; const gravity = 0.4; const jumpForce = -9.5; const moveSpeed = 4.5;
